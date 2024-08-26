@@ -1,0 +1,27 @@
+<!-- visits/templates/visits/doctor_dashboard.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}  فرم مشتری {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header text-center">
+                    <h2 class="h4">فرم ثبت مراجعه کننده</h2>
+                    <h2 class="h4">{{ full_name }}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit">پرداخت</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,82 @@
+<!-- در قالب صفحه اصلی -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .btn-icon {
+        border: none;
+        padding: 0;
+        background: none;
+    }
+    
+    .avatar-img {
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    
+    .btn-lg {
+        font-size: 1.25rem;
+        padding: .75rem 1.25rem;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">خوش آمدید، {{ request.user.user_profile.get_fullname }}</h1>
+
+    {% if request.user.is_authenticated %}
+        <div class="text-center mb-4">
+            <h2>پروفایل خود را تکمیل کنید</h2>
+        </div>
+        
+        <div class="text-center mb-4">
+            <button class="btn btn-light btn-icon" id="dropdownMenuLink" aria-haspopup="true" aria-expanded="false">
+                <span class="avatar avatar-sm avatar-circle">
+                    <img class="avatar-img" src="{{ request.user.user_profile.image.url }}" alt="Profile Image">
+                </span>
+            </button>
+        </div>
+
+        <div class="text-center mb-4">
+            <a href="{% url 'accounts:profile' %}" class="btn btn-primary">پروفایل</a>
+            <a href="{% url 'accounts:logout' %}" class="btn btn-danger">خروج</a>
+        </div>
+
+        <div class="text-center mb-4">
+            <a href="{% url 'visits:create_visit' %}" class="btn btn-warning">برای ثبت ویزیت، اینجا کلیک کنید</a>
+        </div>
+
+    {% else %}
+        <div class="text-center mb-4">
+            <a class="btn btn-primary btn-lg" href="{% url 'accounts:login' %}">ورود</a>
+            <a class="btn btn-secondary btn-lg" href="{% url 'accounts:registration_step_one' %}">ثبت نام</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

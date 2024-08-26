@@ -1,0 +1,9 @@
+Django>=4.2,<4.3
+asgiref==3.8.1
+django-debug-toolbar==4.4.6
+pillow==10.4.0
+psycopg2-binary==2.9.9
+python-decouple==3.8
+sqlparse==0.5.1
+typing_extensions==4.12.2
+faker==27.0.0

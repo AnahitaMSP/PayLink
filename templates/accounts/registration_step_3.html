@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %} انتخاب رمز عبور {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header text-center">
+                    <h2 class="h4">انتخاب رمز عبور</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'accounts:registration_step_three' %}">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            {{ form.new_password1.label_tag }}<br>
+                            {{ form.new_password1 }}<br>
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.new_password2.label_tag }}<br>
+                            {{ form.new_password2 }}<br>
+                        </div>
+                        <button type="submit" class="btn btn-primary">ثبت نام</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

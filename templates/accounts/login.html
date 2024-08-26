@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %} ورود {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header text-center">
+                    <h2 class="h4">ورود به حساب کاربری</h2>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'accounts:login' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="username">شماره موبایل</label>
+                            <input type="tel" class="form-control" name="username" id="username" placeholder="09xxxxxxxxx" required>
+                            <div class="invalid-feedback">لطفا شماره موبایل معتبر وارد کنید.</div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="password">کلمه عبور</label>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="حداقل 8 کاراکتر" required>
+                            <div class="invalid-feedback">لطفا کلمه عبور معتبر وارد کنید.</div>
+                        </div>
+                        <div class="form-group d-flex justify-content-between align-items-center">
+                            <a href="{% url 'accounts:forgot_password' %}" class="text-primary">رمز عبور را فراموش کرده‌اید؟</a>
+                            <button type="submit" class="btn btn-primary">ورود</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <p>حساب کاربری ندارید؟ <a href="{% url 'accounts:registration_step_one' %}" class="link">ثبت نام کنید</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

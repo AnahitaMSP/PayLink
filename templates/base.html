@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <!-- Required Meta Tags Always Come First -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Title -->
+    <title>{% block title %} {% endblock title %}</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- CSS Implementing Plugins -->
+    <link rel="stylesheet" href="{% static 'css/vendor.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/font/bootstrap-icons.css' %}">
+
+    <!-- CSS Front Template -->
+    <link rel="stylesheet" href="{% static 'css/theme.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/toastify/toastify.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %} {% endblock extra_css %}
+
+    {% block extra_css_no_compress %} {% endblock extra_css_no_compress %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:profile' %}">پروفایل</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">خروج</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">ورود</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:registration_step_one' %}">ثبت نام</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+
+    <!-- Main Content -->
+    <main id="content" role="main">
+        {% block content %}{% endblock content %}
+    </main>
+    <!-- End Main Content -->
+
+    <!-- Scripts -->
+    {% block extra_js %} {% endblock extra_js %}
+    {% block extra_js_no_compress %} {% endblock extra_js_no_compress %}
+</body>
+</html>

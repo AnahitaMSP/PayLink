@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %} پروفایل کاربری {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header text-center">
+            <h2 class="h4">پروفایل کاربری</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+            </form>
+            <div class="mt-4">
+                <h3>اطلاعات کاربری:</h3>
+                <p><strong>نام:</strong> {{ form.instance.first_name }}</p>
+                <p><strong>نام خانوادگی:</strong> {{ form.instance.last_name }}</p>
+                <p><strong>تصویر پروفایل:</strong></p>
+                <img src="{{ form.instance.image.url }}" alt="Profile image" class="img-thumbnail" width="150">
+                {% if form.instance.job %}
+                    <p><strong>شغل:</strong> {{ form.instance.job }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a href="{% url 'accounts:logout' %}" class="btn btn-danger">خروج</a>
+    </div>
+</div>
+{% endblock content %}

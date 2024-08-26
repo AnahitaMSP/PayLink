@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %} ورود شماره تلفن {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header text-center">
+                    <h2 class="h4">ورود شماره تلفن</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        <div class="form-group mb-3">
+                            {{ form.phone_number.label_tag }}<br>
+                            {{ form.phone_number }}<br>
+                            <div class="invalid-feedback">
+                                {% for error in form.phone_number.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">ارسال کد تایید</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

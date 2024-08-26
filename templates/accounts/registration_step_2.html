@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %} ورود کد تایید {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header text-center">
+                    <h2 class="h4">کد تایید را وارد کنید</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'accounts:registration_step_two' %}">
+                        {% csrf_token %}
+                        {{ form.code.label_tag }}<br>
+                        {{ form.code }}<br>
+                        <button type="submit" class="btn btn-primary">تایید کد</button>
+                    </form>
+                    <div class="mt-3">
+                        <p id="countdown">2:00</p>
+                        <form method="POST" action="{% url 'accounts:registration_step_two' %}">
+                            {% csrf_token %}
+                            <button id="resend-button" name="resend_code" class="btn btn-link" style="display: none;">ارسال مجدد کد</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let timer = 120;  // 2 دقیقه به ثانیه
+        let resendButton = document.getElementById("resend-button");
+        let countdownElement = document.getElementById("countdown");
+
+        let countdownInterval = setInterval(function () {
+            let minutes = Math.floor(timer / 60);
+            let seconds = timer % 60;
+
+            countdownElement.textContent = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+            
+            if (timer <= 0) {
+                clearInterval(countdownInterval);
+                countdownElement.style.display = "none";
+                resendButton.style.display = "block";
+            }
+
+            timer--;
+        }, 1000);
+    });
+</script>
+{% endblock content %}
