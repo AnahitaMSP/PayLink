@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'visits',
-    'azbankgateways',
     'payments',
+    'azbankgateways'
 ]
 
 MIDDLEWARE = [
@@ -144,38 +144,6 @@ LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
 AUTH_PASSWORD_VALIDATORS = []
 
-AZ_IRANIAN_BANK_GATEWAYS = {
-    "GATEWAYS": {
-        "ZIBAL": {
-            "MERCHANT_CODE": "zibal",
-        },
-        
-    },
-    "DEFAULT": "ZIBAL",
-    "CURRENCY": "IRR",  # اختیاری
-    "TRACKING_CODE_QUERY_PARAM": "tc",  # اختیاری
-    "TRACKING_CODE_LENGTH": 16,  # اختیاری
-    "SETTING_VALUE_READER_CLASS": "azbankgateways.readers.DefaultReader",  # اختیاری
-    "BANK_PRIORITIES": [
-    ],  # اختیاری
-    'STATUS_QUERY_PARAM': 'status', 
-    'REDIRECT_URL': 'visits:callback_gateway',
-}
-
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
+# payment gateway settings
+MERCHANT_ID = config("MERCHANT_ID",default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")
+SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
