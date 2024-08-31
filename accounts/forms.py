@@ -1,6 +1,6 @@
 from django.contrib.auth import forms as auth_forms
 from django.core.exceptions import ValidationError
-from .models import Profile
+from .models import Profile,Province,City
 from django import forms
 from django.contrib.auth.forms import SetPasswordForm
 from django import forms
@@ -21,22 +21,63 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
                 code='unverified'
             )
 
+
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name', 'image', 'job']  # شامل فیلد شغل
+        fields = [
+            'first_name', 'last_name', 'image', 'job', 'national_code', 'iban',
+            'bank_card_number', 'province', 'city', 'address', 'tell_phone', 'gender',
+            'medical_license_number'  # اضافه کردن فیلد پروانه پزشکی
+        ]
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'national_code': forms.TextInput(attrs={'class': 'form-control'}),
+            'iban': forms.TextInput(attrs={'class': 'form-control'}),
+            'bank_card_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.TextInput(attrs={'class': 'form-control'}),
+            'tell_phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'gender': forms.Select(attrs={'class': 'form-control'}),
+            'province': forms.Select(attrs={'class': 'form-control'}),
+            'city': forms.Select(attrs={'class': 'form-control'}),
+            'medical_license_number': forms.TextInput(attrs={'class': 'form-control'})  # اضافه کردن کلاس برای پروانه پزشکی
+        }
 
     job = forms.ModelChoiceField(
         queryset=ServiceType.objects.all(),
         required=False,
-        empty_label="انتخاب شغل"
+        empty_label="انتخاب شغل",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    province = forms.ModelChoiceField(
+        queryset=Province.objects.all(),
+        required=False,
+        empty_label="انتخاب استان",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    city = forms.ModelChoiceField(
+        queryset=City.objects.all(),
+        required=False,
+        empty_label="انتخاب شهر",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    gender = forms.ChoiceField(
+        choices=[('male', 'مرد'), ('female', 'زن'), ('other', 'سایر')],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user and user.type != UserType.provider.value:
-            self.fields.pop('job')  # 
+            self.fields.pop('job')  # حذف فیلد شغل در صورتی که نوع کاربر provider نباشد
+
 
 class PhoneNumberForm(forms.Form):
     phone_number = forms.CharField(
@@ -44,11 +85,6 @@ class PhoneNumberForm(forms.Form):
         validators=[RegexValidator(regex=r'^[0-9]{11}$', message='شماره تلفن باید 11 رقم باشد')]
     )
 
-    def clean_phone_number(self):
-        phone_number = self.cleaned_data.get('phone_number')
-        if User.objects.filter(phone_number=phone_number).exists():
-            raise forms.ValidationError('شماره تلفن تکراری است. لطفاً شماره جدید وارد کنید.')
-        return phone_number
 # فرم تایید کد در مرحله دوم
 class VerifyCodeForm(forms.Form):
     code = forms.CharField(

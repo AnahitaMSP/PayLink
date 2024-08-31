@@ -4,6 +4,7 @@ from .models import Profile ,ServiceType
 from django.contrib.auth import get_user_model
 from .models import VerificationCode
 from django.contrib.sessions.models import Session
+from .models import Province, City
 
 User = get_user_model()
 
@@ -95,6 +96,9 @@ admin.site.register(User, CustomUserAdmin)
 admin.site.register(VerificationCode, VerificationCodeAdmin)
 
 admin.site.register(ServiceType, ServiceTypeAdmin)
+admin.site.register(Province)
+admin.site.register(City)
+
 
 
 class SessionAdmin(admin.ModelAdmin):

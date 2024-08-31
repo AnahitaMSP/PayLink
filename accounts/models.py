@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.core.validators import RegexValidator
-from accounts.validators import validate_iranian_cellphone_number
+from accounts.validators import validate_iranian_cellphone_number,validate_national_code,validate_iban,validate_bank_card_number,validate_fixed_phone
 from django.utils import timezone
 import datetime
 
@@ -79,12 +79,64 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 
+class Province(models.Model):
+    name = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    slug = models.SlugField(null=True, blank=True)
+    tel_prefix = models.CharField(max_length=10, null=True, blank=True)
+    def __str__(self):
+        return self.name
+    
+class City(models.Model):
+    name = models.CharField(max_length=255)
+    province = models.ForeignKey(Province, on_delete=models.CASCADE, related_name='cities')
+
+    def __str__(self):
+        return self.name
+    
+
 class Profile(models.Model):
     user = models.OneToOneField('User', on_delete=models.CASCADE, related_name="user_profile")
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     job = models.ForeignKey(ServiceType, on_delete=models.SET_NULL, null=True, blank=True, related_name='profiles')
     image = models.ImageField(upload_to="profile/", default="profile/default.png")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    national_code = models.CharField(
+        max_length=10,
+        validators=[validate_national_code],
+        unique=True,
+        null=True,
+        blank=True
+    )
+    iban = models.CharField(
+        max_length=24,
+        validators=[validate_iban],
+        unique=True,
+        null=True,
+        blank=True
+    )
+    bank_card_number = models.CharField(
+        max_length=16,
+        validators=[validate_bank_card_number],
+        unique=True,
+        null=True,
+        blank=True
+    )
+
+    province = models.ForeignKey(Province, on_delete=models.CASCADE ,null=True, blank=True)  # انتخاب استان
+    city = models.ForeignKey(City, on_delete=models.CASCADE,null=True, blank=True)  # انتخاب شهر
+    address = models.CharField(max_length=200,null=True, blank=True)  # فیلد آدرس
+    tell_phone = models.CharField(
+        max_length=15,
+        validators=[validate_fixed_phone] ,null=True, blank=True # اضافه کردن ولیدیشن
+    )
+    gender = models.CharField(max_length=10, choices=[('male', 'مرد'), ('female', 'زن'), ('other', 'سایر')],null=True, blank=True)
+
+
+    medical_license_number = models.CharField(max_length=50, blank=True, null=True)
+
+    
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -101,6 +153,7 @@ class Profile(models.Model):
 def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
 
         
 class VerificationCode(models.Model):
