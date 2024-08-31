@@ -21,6 +21,13 @@ from .models import User
 from datetime import timedelta
 from django.utils import timezone
 
+from django.http import JsonResponse
+from .models import City
+
+def load_cities(request):
+    province_id = request.GET.get('province_id')
+    cities = City.objects.filter(province_id=province_id).all()
+    return JsonResponse(list(cities.values('id', 'name')), safe=False)
 
 class LoginView(auth_views.LoginView):
     template_name='accounts/login.html'
@@ -38,7 +45,10 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         # اطمینان از اینکه کاربر فقط پروفایل خودش را ببیند
+        messages.success(self.request, 'ثبت‌نام با موفقیت انجام شد.')
+
         return self.request.user.user_profile
+
     
 API_KEY = '7450376C4463324C38356936654731333334466350633032493877513974333767725947776D49414F65383D'
 
@@ -183,58 +193,104 @@ class RegistrationStepThreeView(View):
         return render(request, self.template_name, {'form': form})
     
 class ForgotPasswordView(View):
+    template_name = 'accounts/forgot_password.html'
+    form_class = PhoneNumberForm
+
     def get(self, request):
-        phone_number_form = PhoneNumberForm()
-        return render(request, 'accounts/forgot_password.html', {'phone_number_form': phone_number_form})
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        if 'send_code' in request.POST:
-            phone_number_form = PhoneNumberForm(request.POST)
-            if phone_number_form.is_valid():
-                print('resetpass phone is valied')
-                phone_number = phone_number_form.cleaned_data['phone_number']
-                if not User.objects.filter(phone_number=phone_number).exists():
-                    messages.error(request, 'شماره تلفن در سیستم موجود نیست. لطفاً ثبت نام کنید.')
-                    return redirect('accounts:forgot_password')
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            phone_number = form.cleaned_data['phone_number']
+            try:
+                user = User.objects.get(phone_number=phone_number)
+            except User.DoesNotExist:
+                form.add_error('phone_number', 'این شماره تلفن ثبت نشده است.')
+                return render(request, self.template_name, {'form': form})
 
-                verification_code = randint(100000, 999999)
-                send_verification_code(phone_number, verification_code)
+            # Generate a new verification code
+            verification_code = randint(100000, 999999)
 
-                VerificationCode.objects.update_or_create(
-                    phone_number=phone_number,
-                    defaults={'code': verification_code}
-                )
+            # Send the verification code via SMS
 
-                messages.success(request, 'کد تایید به شماره شما ارسال شد.')
-                request.session['phone_number'] = phone_number
-                return redirect('accounts:verify_code')
-            return render(request, 'accounts/forgot_password.html', {'phone_number_form': phone_number_form})
+            # Save or update the verification code in the database
+            VerificationCode.objects.update_or_create(
+                phone_number=phone_number,
+                defaults={'code': verification_code}
+            )
 
-        elif 'verify_code' in request.POST:
-            code_form = VerifyCodeForm(request.POST)
-            if code_form.is_valid():
-                code = code_form.cleaned_data['code']
-                phone_number = request.session.get('phone_number')
-                if not phone_number:
-                    return redirect('accounts:forgot_password')
+            # Inform the user that the code has been sent
+            messages.success(request, 'کد تایید به شماره شما ارسال شد.')
+            request.session['phone_number'] = phone_number
+            return redirect('accounts:verify_code')
 
-                try:
-                    verification = VerificationCode.objects.get(phone_number=phone_number)
-                    if verification.code == code and not verification.is_expired():
-                        messages.success(request, 'کد تایید معتبر است.')
-                        return redirect('accounts:set_password')
-                    else:
-                        messages.error(request, 'کد نامعتبر یا منقضی شده است.')
-                except VerificationCode.DoesNotExist:
-                    messages.error(request, 'شماره تلفن یافت نشد.')
-                return redirect('accounts:verify_code')
+        return render(request, self.template_name, {'form': form})
+    
 
-        elif 'set_password' in request.POST:
-            password_form = PasswordForm(user=User.objects.get(phone_number=request.session.get('phone_number')), data=request.POST)
-            if password_form.is_valid():
-                password_form.save()
-                messages.success(request, 'رمز عبور با موفقیت تغییر کرد.')
-                return redirect('accounts:login')
-            return render(request, 'accounts/set_password.html', {'password_form': password_form})
+class VerifyCodeView(View):
+    template_name = 'accounts/verify_code.html'
+    form_class = VerifyCodeForm
 
-        return redirect('accounts:forgot_password')
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            phone_number = request.session.get('phone_number')
+
+            if not phone_number:
+                return redirect('accounts:forgot_password')
+
+            try:
+                verification = VerificationCode.objects.get(phone_number=phone_number)
+                if verification.code == code:
+                    messages.success(request, 'کد تایید معتبر است.')
+                    return redirect('accounts:reset_password')
+                else:
+                    messages.error(request, 'کد نامعتبر یا منقضی شده است.')
+            except VerificationCode.DoesNotExist:
+                messages.error(request, 'شماره تلفن یافت نشد.')
+
+        return render(request, self.template_name, {'form': form})
+    
+
+class ResetPasswordView(View):
+    template_name = 'accounts/set_password.html'
+
+    def get(self, request):
+        phone_number = request.session.get('phone_number')
+        if not phone_number:
+            return redirect('accounts:forgot_password')
+
+        user = User.objects.get(phone_number=phone_number)
+        form = SetPasswordForm(user)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        phone_number = request.session.get('phone_number')
+        if not phone_number:
+            return redirect('accounts:forgot_password')
+
+        user = User.objects.get(phone_number=phone_number)
+        form = SetPasswordForm(user, request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'رمز عبور شما با موفقیت تغییر یافت.')
+            return redirect('accounts:password_change_success')
+        else:
+            messages.error(request, 'لطفاً فرم را با دقت تکمیل کنید.')
+
+        return render(request, self.template_name, {'form': form})
+    
+
+class PasswordChangeSuccessView(View):
+    template_name = 'accounts/password_change_success.html'
+
+    def get(self, request):
+        return render(request, self.template_name)

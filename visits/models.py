@@ -11,6 +11,7 @@ class Visit(models.Model):
     visit_fee = models.DecimalField(max_digits=10, decimal_places=2)
     payment_link = models.URLField(max_length=200, blank=True, null=True)
     is_paid = models.BooleanField(default=False)
+    payment = models.ForeignKey('payments.PaymentModel',on_delete=models.SET_NULL,null=True  )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
