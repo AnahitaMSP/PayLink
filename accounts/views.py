@@ -20,6 +20,7 @@ from django.contrib.auth.forms import SetPasswordForm
 from .models import User
 from datetime import timedelta
 from django.utils import timezone
+import requests
 
 from django.http import JsonResponse
 from .models import City
@@ -50,23 +51,30 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.user.user_profile
 
     
-API_KEY = '7450376C4463324C38356936654731333334466350633032493877513974333767725947776D49414F65383D'
 
-def send_verification_code(receptor, token):
-    try:
-        api = KavenegarAPI(API_KEY)
-        params = {
-            'receptor': receptor,
-            'template': 'your_template',  # قالب پیامک که از پنل کاوه نگار تنظیم شده است
-            'token': token
-        }
-        response = api.verify_lookup(params)
-        print(response)  # برای اشکال‌زدایی
-    except APIException as e:
-        print(f'API Exception: {e}')
-    except HTTPException as e:
-        print(f'HTTP Exception: {e}')
+def send_verification_sms(api_key, receptor, token, template, message_type='sms'):
 
+    
+    """
+    ارسال پیامک تایید با استفاده از API Kavenegar
+
+    :param api_key: کلید API معتبر Kavenegar
+    :param receptor: شماره گیرنده (با کد کشور و بدون فاصله)
+    :param token: کد تایید
+    :param template: نام الگوی تعریف شده
+    :param message_type: نوع پیام (پیش‌فرض 'sms')
+    :return: پاسخ API
+    """
+    url = f'https://api.kavenegar.com/v1/{api_key}/verify/lookup.json'
+    params = {
+        'receptor': receptor,
+        'token': token,
+        'template': template,
+        'type': message_type
+    }
+    
+    response = requests.get(url, params=params)
+    return response.json()
 # مرحله اول: دریافت شماره تلفن
 class RegistrationStepOneView(View):
     template_name = 'accounts/registration_step_1.html'
@@ -92,11 +100,16 @@ class RegistrationStepOneView(View):
             else:
                 User.objects.get_or_create(phone_number=phone_number)
 
+
             verification_code = randint(100000, 999999)
             print(verification_code)
 
-            send_verification_code(phone_number, verification_code)
+            # کلید API و الگوی پیامک را اینجا تنظیم کنید
+            api_key = '6E746B36304649736E304177367A307175776575365A6D772B716858755833494D634553355066755445513D'
+            template = 'send-register-code'
             
+            # ارسال کد تایید
+            send_verification_sms(api_key, phone_number, verification_code, template)            
             VerificationCode.objects.update_or_create(
                 phone_number=phone_number,
                 defaults={'code': verification_code}
@@ -212,7 +225,14 @@ class ForgotPasswordView(View):
 
             # Generate a new verification code
             verification_code = randint(100000, 999999)
+            print(verification_code)
 
+            # کلید API و الگوی پیامک را اینجا تنظیم کنید
+            api_key = '6E746B36304649736E304177367A307175776575365A6D772B716858755833494D634553355066755445513D'
+            template = 'send-register-code'
+            
+            # ارسال کد تایید
+            send_verification_sms(api_key, phone_number, verification_code, template)
             # Send the verification code via SMS
 
             # Save or update the verification code in the database
