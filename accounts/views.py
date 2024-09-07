@@ -135,10 +135,16 @@ class RegistrationStepTwoView(View):
             phone_number = request.session.get('phone_number')
             if phone_number:
                 # تولید کد جدید
+
                 new_verification_code = randint(100000, 999999)
+                print(new_verification_code)
+
+                # کلید API و الگوی پیامک را اینجا تنظیم کنید
+                api_key = '6E746B36304649736E304177367A307175776575365A6D772B716858755833494D634553355066755445513D'
+                template = 'send-register-code'
                 
-                # ارسال کد جدید
-                send_verification_code(phone_number, new_verification_code)
+                # ارسال کد تایید
+                send_verification_sms(api_key, phone_number, new_verification_code, template)   
                 
                 # به‌روزرسانی کد در دیتابیس
                 VerificationCode.objects.update_or_create(

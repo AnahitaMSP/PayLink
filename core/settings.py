@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'accounts',
     'visits',
     'payments',
-    'azbankgateways'
 ]
 
 MIDDLEWARE = [
@@ -138,7 +137,6 @@ STATICFILES_DIRS=[
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
@@ -147,3 +145,9 @@ AUTH_PASSWORD_VALIDATORS = []
 # payment gateway settings
 MERCHANT_ID = config("MERCHANT_ID",default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")
 SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
+
+NOVINPAL_API_KEY = "28266702-0fed-4669-9f0a-b70fc7af228a"
+NOVINPAL_RETURN_URL = "https://panel.arzdex.shop/payment/verify/"
+NOVINPAL_REQUEST_URL = "https://api.novinpal.ir/invoice/request"
+NOVINPAL_START_URL = "https://api.novinpal.ir/invoice/start/"
+NOVINPAL_VERIFY_URL = "https://api.novinpal.ir/invoice/verify"

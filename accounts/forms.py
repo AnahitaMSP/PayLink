@@ -28,7 +28,6 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = [
             'first_name', 'last_name', 'image', 'job', 'national_code', 'iban',
             'bank_card_number', 'province', 'city', 'address', 'tell_phone', 'gender',
-            'medical_license_number'  # اضافه کردن فیلد پروانه پزشکی
         ]
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -42,7 +41,6 @@ class ProfileUpdateForm(forms.ModelForm):
             'gender': forms.Select(attrs={'class': 'form-control'}),
             'province': forms.Select(attrs={'class': 'form-control'}),
             'city': forms.Select(attrs={'class': 'form-control'}),
-            'medical_license_number': forms.TextInput(attrs={'class': 'form-control'})  # اضافه کردن کلاس برای پروانه پزشکی
         }
 
     job = forms.ModelChoiceField(

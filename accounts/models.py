@@ -100,8 +100,6 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=255)
     job = models.ForeignKey(ServiceType, on_delete=models.SET_NULL, null=True, blank=True, related_name='profiles')
     image = models.ImageField(upload_to="profile/", default="profile/default.png")
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     national_code = models.CharField(
         max_length=10,
         validators=[validate_national_code],
@@ -132,10 +130,6 @@ class Profile(models.Model):
         validators=[validate_fixed_phone] ,null=True, blank=True # اضافه کردن ولیدیشن
     )
     gender = models.CharField(max_length=10, choices=[('male', 'مرد'), ('female', 'زن'), ('other', 'سایر')],null=True, blank=True)
-
-
-    medical_license_number = models.CharField(max_length=50, blank=True, null=True)
-
     
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)

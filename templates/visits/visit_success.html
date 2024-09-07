@@ -1,18 +1,5 @@
-<!-- visits/templates/visits/visit_success.html -->
-
 {% extends 'base.html' %}
-
-{% block title %} موفقیت آمیز {% endblock %}
-
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="alert alert-success text-center">
-                <h2 class="h4">ویزیت با موفقیت ثبت شد!</h2>
-                <a href="{% url 'visits:create_visit' %}" class="btn btn-primary mt-3">ثبت ویزیت جدید</a>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock content %}
+  <h1>پرداخت موفقیت آمیز بود!</h1>
+  <p>پرداخت شما با موفقیت انجام شد. اطلاعات ویزیت شما ثبت شد.</p>
+{% endblock %}

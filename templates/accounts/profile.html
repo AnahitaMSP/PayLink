@@ -59,10 +59,7 @@
                     <label for="id_job">شغل:</label>
                     {{ form.job }}
                 </div>
-                <div class="form-group" id="medical_license_number_field" style="display: none;">
-                    <label for="medical_license_number">پروانه پزشکی:</label>
-                    {{ form.medical_license_number }}
-                </div>
+           
                 
                 <div class="form-group">
                     <label for="tell_phone">تلفن ثابت:</label>
@@ -108,24 +105,9 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        const jobField = document.querySelector('#id_job'); // اطمینان از id صحیح
-        const medicalLicenseField = document.querySelector('#medical_license_number_field');
+   
         
-        function toggleMedicalLicenseField() {
-            if (jobField.value = 1) { // اطمینان از مطابقت مقدار با مقدار درست
-                medicalLicenseField.style.display = 'block';
-            } else {
-                medicalLicenseField.style.display = 'none';
-            }
-        }
-        
-        // Initialize the display based on the current value
-        toggleMedicalLicenseField();
-        
-        // Add an event listener for changes to the job field
-        jobField.addEventListener('change', toggleMedicalLicenseField);
-    });
+
 
     $(document).ready(function() {
         // غیرفعال کردن فیلد شهر در ابتدا
