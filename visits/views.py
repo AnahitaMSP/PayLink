@@ -1,21 +1,18 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from visits.models import Visit
 from .forms import VisitForm
-from django.views.generic import TemplateView
 from payments.models import PaymentModel, PaymentStatusType
 from django.http import HttpResponse
-from django.views import View
 import requests
 from django.conf import settings
-from payments.models import PaymentModel
 
 
 def send_paymentlink_sms(api_key, receptor, token, template, message_type='sms'):
-
     url = f'https://api.kavenegar.com/v1/{api_key}/verify/lookup.json'
     params = {
         'receptor': receptor,
@@ -23,7 +20,6 @@ def send_paymentlink_sms(api_key, receptor, token, template, message_type='sms')
         'template': template,
         'type': message_type
     }
-
     response = requests.get(url, params=params)
     return response.json()
 
@@ -31,7 +27,6 @@ def send_paymentlink_sms(api_key, receptor, token, template, message_type='sms')
 class CreateVisitView(LoginRequiredMixin, FormView):
     template_name = 'visits/create_visit.html'
     form_class = VisitForm
-    success_url = reverse_lazy('visits:visit_success')
 
     def form_valid(self, form):
         visit = form.save(commit=False)
@@ -42,7 +37,10 @@ class CreateVisitView(LoginRequiredMixin, FormView):
         if payment_url:
             # ارسال پیامک حاوی لینک پرداخت
             self.send_payment_sms(visit.phone_number, payment_url)
-            return redirect('visits:visit_success')
+            # ارسال پیغام به قالب
+            return render(self.request, 'visits/payment_link_sent.html', {
+                'phone_number': visit.phone_number
+            })
         else:
             form.add_error(None, "خطا در پردازش پرداخت. لطفاً دوباره تلاش کنید.")
             return self.form_invalid(form)
@@ -57,7 +55,6 @@ class CreateVisitView(LoginRequiredMixin, FormView):
             "description": f"پرداخت ویزیت برای {visit.patient_name}",
             "mobile": visit.phone_number
         }
-
         response = requests.post(settings.NOVINPAL_REQUEST_URL, json=payment_data)
         response_data = response.json()
 
@@ -77,14 +74,12 @@ class CreateVisitView(LoginRequiredMixin, FormView):
             return None
 
     def send_payment_sms(self, phone_number, payment_url):
-        
         """
         ارسال پیامک حاوی لینک پرداخت به کاربر
         """
         api_key = '6E746B36304649736E304177367A307175776575365A6D772B716858755833494D634553355066755445513D'
         template = "send-payment-link"  # نام الگوی پیامک تعریف‌شده در پنل کاوه‌نگار
         send_paymentlink_sms(api_key, phone_number, payment_url, template)
-
 
 class VerifyPaymentView(View):
     def get(self, request, *args, **kwargs):
@@ -113,15 +108,18 @@ class VerifyPaymentView(View):
                 visit.is_paid = True
                 visit.save()
 
-                return redirect('visits:visit_success')
+                return render(request, 'visits/payment_success.html', {
+                    'message': "پرداخت موفقیت‌آمیز بود."
+                })
             else:
                 # تراکنش ناموفق
                 payment.status = PaymentStatusType.failed
                 payment.save()
+                return render(request, 'visits/payment_failed.html', {
+                    'message': "پرداخت ناموفق بود."
+                })
 
         # در صورت عدم موفقیت در پرداخت یا تایید، به صفحه خطا بروید
-        return HttpResponse("پرداخت ناموفق بود", status=400)
-
-
-class VisitSuccessView(TemplateView):
-    template_name = 'visits/visit_success.html'
+        return render(request, 'visits/payment_failed.html', {
+            'message': "پرداخت ناموفق بود."
+        })

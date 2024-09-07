@@ -1,0 +1,22 @@
+<!-- visits/templates/visits/payment_success.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}پرداخت موفقیت‌آمیز{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header text-center">
+                    <h2 class="h4">پرداخت موفقیت‌آمیز</h2>
+                </div>
+                <div class="card-body">
+                    <p>{{ message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
