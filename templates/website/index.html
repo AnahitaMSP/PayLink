@@ -1,49 +1,120 @@
-<!-- در قالب صفحه اصلی -->
 {% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
 <style>
-    .btn-icon {
-        border: none;
-        padding: 0;
-        background: none;
-    }
-    
-    .avatar-img {
-        border-radius: 50%;
-        width: 60px;
-        height: 60px;
+    /* استایل برای کانتینر اصلی */
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .container {
-        max-width: 800px;
-        margin: auto;
+    /* استایل برای عنوان اصلی */
+    h1 {
+        font-size: 2.5rem;
+        color: #343a40;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    /* استایل برای عنوان ثانویه */
+    h2 {
+        font-size: 1.8rem;
+        color: #495057;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    /* استایل برای دکمه‌ها */
+    .btn {
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-transform: uppercase;
+        border: none;
+        transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
     }
 
     .btn-primary {
         background-color: #007bff;
-        border-color: #007bff;
+        color: #fff;
     }
-    
-    .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-light {
+        background-color: #ffffff;
+        color: #495057;
+        border: 1px solid #dee2e6;
+    }
+
+    .btn-light:hover {
+        background-color: #f1f3f5;
+        border-color: #ced4da;
     }
 
     .btn-danger {
         background-color: #dc3545;
-        border-color: #dc3545;
+        color: #fff;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     .btn-warning {
         background-color: #ffc107;
-        border-color: #ffc107;
+        color: #212529;
     }
-    
-    .btn-lg {
-        font-size: 1.25rem;
-        padding: .75rem 1.25rem;
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* استایل برای دکمه‌های آیکون */
+    .btn-icon {
+        padding: 0;
+        border: none;
+        background: none;
+    }
+
+    .avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 3px solid #007bff;
+        background-color: #e9ecef;
+        overflow: hidden;
+    }
+
+    .avatar-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+    }
+
+    /* استایل برای بخش‌های متنی */
+    .text-center {
+        text-align: center;
+    }
+
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    .mt-5 {
+        margin-top: 3rem;
     }
 </style>
 
@@ -64,7 +135,9 @@
         </div>
 
         <div class="text-center mb-4">
-            <a href="{% url 'accounts:profile' %}" class="btn btn-primary">پروفایل</a>
+            <a href="{% url 'accounts:profile' %}" class="btn btn-primary">مبلغ کیف پول : </a>
+
+            <a href="{% url 'accounts:profile' %}" class="btn btn-primary">تکمیل اطلاعات شخصی</a>
             <a href="{% url 'accounts:logout' %}" class="btn btn-danger">خروج</a>
         </div>
 
@@ -79,4 +152,5 @@
         </div>
     {% endif %}
 </div>
+
 {% endblock content %}

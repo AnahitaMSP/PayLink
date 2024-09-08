@@ -65,6 +65,8 @@ class CreateVisitView(LoginRequiredMixin, FormView):
                 amount=visit.visit_fee,
                 status=PaymentStatusType.pending
             )
+            print(response_data['refId'])
+            print(f"{settings.NOVINPAL_START_URL}{response_data['refId']}")
             visit.payment = payment
             visit.save()
 
@@ -75,7 +77,7 @@ class CreateVisitView(LoginRequiredMixin, FormView):
 
     def send_payment_sms(self, phone_number, payment_url):
         """
-        ارسال پیامک حاوی لینک پرداخت به کاربر
+        ارسال پیامک حاوی لینک پرداخت به کاربرس
         """
         api_key = '6E746B36304649736E304177367A307175776575365A6D772B716858755833494D634553355066755445513D'
         template = "send-payment-link"  # نام الگوی پیامک تعریف‌شده در پنل کاوه‌نگار

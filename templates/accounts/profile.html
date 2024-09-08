@@ -4,6 +4,180 @@
 {% block title %}پروفایل کاربری{% endblock %}
 
 {% block content %}
+<style>
+    /* استایل برای کانتینر اصلی */
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* استایل برای کارت */
+    .card {
+        border: none;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 15px;
+        border-bottom: 1px solid #e1e1e1;
+        position: relative;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    /* استایل برای دکمه‌های بازگشت */
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 15px;
+        font-size: 0.875rem;
+        transition: background-color 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    /* استایل برای فرم */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        background-color: #ffffff;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .img-thumbnail {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .img-thumbnail:hover {
+        transform: scale(1.05);
+    }
+
+    /* استایل برای پیام‌های خطا */
+    .alert {
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+        padding: 15px;
+        font-size: 0.875rem;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    /* استایل برای تصویر پروفایل */
+    .avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 3px solid #007bff;
+        background-color: #e9ecef;
+        overflow: hidden;
+    }
+
+    .avatar-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+
+    .image-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* فاصله بین تصویر و دکمه */
+}
+
+.btn-change-image {
+    padding: 6px 12px; /* اندازه پدینگ دکمه */
+    font-size: 14px; /* اندازه فونت دکمه */
+    border-radius: 5px; /* گوشه‌های دکمه گرد */
+    border: none;
+    background-color: #007bff; /* رنگ پس‌زمینه دکمه */
+    color: white; /* رنگ متن دکمه */
+    cursor: pointer; /* تغییر نشانگر ماوس به دست */
+    transition: background-color 0.3s; /* افکت تغییر رنگ هنگام hover */
+}
+
+.btn-change-image:hover {
+    background-color: #0056b3; /* رنگ پس‌زمینه دکمه هنگام hover */
+}
+
+</style>
 <div class="container mt-5">
     <div class="card shadow-sm">
         {% if form.errors %}
@@ -22,79 +196,80 @@
         {% endif %}
 
         <div class="card-header text-center">
-            <h2 class="h4">پروفایل کاربری</h2>
-            <button onclick="window.history.back()" class="btn btn-secondary mb-3">بازگشت</button>
 
         </div>
         <div class="card-body">
             <div class="form-group">
+                <label for="image">تصویر پروفایل:</label>
+                <input type="file" id="image" name="image" accept="image/*" style="display:none;" onchange="previewImage(event)">
+                <button type="button" onclick="document.getElementById('image').click();" class="btn btn-primary">تغییر تصویر</button>
+                
+                {% if form.instance.image %}
+                    <img id="profile-image" src="{{ form.instance.image.url }}" alt="Profile image" class="img-thumbnail mt-2" width="150">
+                {% else %}
+                    <img id="profile-image" src="default_image_url" alt="Profile image" class="img-thumbnail mt-2" width="150">
+                {% endif %}
+            </div>
+
+            
+            <div class="form-group  col-md-4 mb-3">
                 <label for="phone_number">شماره موبایل:</label>
                 <input type="text" class="form-control" id="phone_number" value="{{ request.user.phone_number }}" disabled>
             </div>
 
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="form-group">
+
+                
+                <div class="form-group col-md-4 mb-3">
                     <label for="first_name">نام:</label>
                     {{ form.first_name }}
                 </div>
-                <div class="form-group">
+                <div class="form-group col-md-4 mb-3">
                     <label for="last_name">نام خانوادگی:</label>
                     {{ form.last_name }}
                 </div>
-                <div class="form-group">
-                    <label for="image">تصویر پروفایل:</label>
-                    {{ form.image }}
-                    {% if form.instance.image %}
-                        <img src="{{ form.instance.image.url }}" alt="Profile image" class="img-thumbnail mt-2" width="150">
-                    {% endif %}
-                </div>
-                <div class="form-group">
+
+                <div class="form-group col-md-4 mb-3">
                     <label for="national_code">کد ملی:</label>
                     {{ form.national_code }}
                 </div>
-                <div class="form-group">
+                <div class="form-group col-md-4 mb-3">
                     <label for="gender">جنسیت:</label>
                     {{ form.gender }}
                 </div>
-                <div class="form-group">
+                <div class="form-group col-md-4 mb-3">
                     <label for="id_job">شغل:</label>
                     {{ form.job }}
                 </div>
            
                 
-                <div class="form-group">
+                <div class="form-group  col-md-4 mb-3">
                     <label for="tell_phone">تلفن ثابت:</label>
                     {{ form.tell_phone }}
                 </div>
-                <div class="form-group">
-                    <label for="province">استان:</label>
+
+                <div class="form-group col-md-4 mb-3">
+                    <label for="iban">شماره شبا:</label>
+                    {{ form.iban }}
+                </div>
+                <div class="form-group col-md-4 mb-3">
+                    <label for="bank_card_number ">شماره کارت بانکی:</label>
+                    {{ form.bank_card_number }}
+                </div>
+
+                <div class="form-group col-md-4 mb-3">
+                    <label for="province ">استان:</label>
                     {{ form.province }}
                 </div>
-                <div class="form-group">
-                    <label for="city">شهر:</label>
+                <div class="form-group col-md-4 mb-3">
+                    <label for="city ">شهر:</label>
                     {{ form.city }}
                 </div>
                 <div class="form-group">
                     <label for="address">آدرس:</label>
                     {{ form.address }}
                 </div>
-                <div class="form-group">
-                    <label for="iban">شماره شبا:</label>
-                    {{ form.iban }}
-                </div>
-                <div class="form-group">
-                    <label for="bank_card_number">شماره کارت بانکی:</label>
-                    {{ form.bank_card_number }}
-                </div>
-
-                <!-- نمایش فیلدهای سفارشی -->
-                {% for field in custom_fields %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                    </div>
-                {% endfor %}
 
                 <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
             </form>
@@ -108,9 +283,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
    
-        
-
-
     $(document).ready(function() {
         // غیرفعال کردن فیلد شهر در ابتدا
         $('#id_city').prop('disabled', true);
@@ -141,4 +313,16 @@
         });
     });
 </script>
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profile-image').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    </script>
 {% endblock content %}
