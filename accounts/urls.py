@@ -17,4 +17,6 @@ urlpatterns = [
     path('verify-code/', views.VerifyCodeView.as_view(), name='verify_code'),
     path('reset-password/', views.ResetPasswordView.as_view(), name='reset_password'),
 
+    path('add/', views.ProfileTaskCreateView.as_view(), name='add_task'),
+
     ]

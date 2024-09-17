@@ -1,15 +1,17 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import ListView
 from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
+from django.conf import settings
+import requests
 
-from visits.models import Visit
+from visits.models import PatientType, Visit, Invoice
 from .forms import VisitForm
 from payments.models import PaymentModel, PaymentStatusType
-from django.http import HttpResponse
-import requests
-from django.conf import settings
+from accounts.models import Profile
 
 
 def send_paymentlink_sms(api_key, receptor, token, template, message_type='sms'):
@@ -28,28 +30,44 @@ class CreateVisitView(LoginRequiredMixin, FormView):
     template_name = 'visits/create_visit.html'
     form_class = VisitForm
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  
+        return kwargs
+
     def form_valid(self, form):
         visit = form.save(commit=False)
         visit.doctor = self.request.user
+
+        task = form.cleaned_data.get('task')
+        if task:
+            visit.visit_fee = task.fee
+
         visit.save()
 
         payment_url = self.create_payment_url(visit)
         if payment_url:
-            # ارسال پیامک حاوی لینک پرداخت
-            self.send_payment_sms(visit.phone_number, payment_url)
-            # ارسال پیغام به قالب
-            return render(self.request, 'visits/payment_link_sent.html', {
-                'phone_number': visit.phone_number
-            })
+            invoice = self.create_invoice(visit, payment_url)
+            if invoice:
+                self.send_invoice_sms(visit.phone_number, invoice)
+                return render(self.request, 'visits/invoice_sent.html', {
+                    'phone_number': visit.phone_number,
+                    'invoice_number': invoice.invoice_number
+                })
+            else:
+                form.add_error(None, "خطا در ایجاد فاکتور. لطفاً دوباره تلاش کنید.")
+                return self.form_invalid(form)
         else:
-            form.add_error(None, "خطا در پردازش پرداخت. لطفاً دوباره تلاش کنید.")
+            form.add_error(None, "خطا در ایجاد لینک پرداخت. لطفاً دوباره تلاش کنید.")
             return self.form_invalid(form)
 
     def create_payment_url(self, visit):
-        # ساختن درخواست به API نوین‌پال برای ایجاد تراکنش
+        """
+        ایجاد لینک پرداخت از طریق API نوین‌پال
+        """
         payment_data = {
             "api_key": settings.NOVINPAL_API_KEY,
-            "amount": int(visit.visit_fee * 10),  # مبلغ به ریال
+            "amount": int(visit.visit_fee * 10),  
             "return_url": settings.NOVINPAL_RETURN_URL,
             "order_id": f"VISIT-{visit.id}",
             "description": f"پرداخت ویزیت برای {visit.patient_name}",
@@ -59,69 +77,132 @@ class CreateVisitView(LoginRequiredMixin, FormView):
         response_data = response.json()
 
         if response_data.get('status') == 1:
-            # ثبت اطلاعات پرداخت در دیتابیس
             payment = PaymentModel.objects.create(
                 authority_id=response_data['refId'],
                 amount=visit.visit_fee,
                 status=PaymentStatusType.pending
             )
-            print(response_data['refId'])
-            print(f"{settings.NOVINPAL_START_URL}{response_data['refId']}")
             visit.payment = payment
             visit.save()
 
-            # بازگرداندن URL پرداخت
             return f"{settings.NOVINPAL_START_URL}{response_data['refId']}"
         else:
             return None
 
-    def send_payment_sms(self, phone_number, payment_url):
+    def create_invoice(self, visit, payment_url):
         """
-        ارسال پیامک حاوی لینک پرداخت به کاربرس
+        ایجاد فاکتور جدید برای ویزیت
         """
-        api_key = '6E746B36304649736E304177367A307175776575365A6D772B716858755833494D634553355066755445513D'
-        template = "send-payment-link"  # نام الگوی پیامک تعریف‌شده در پنل کاوه‌نگار
-        send_paymentlink_sms(api_key, phone_number, payment_url, template)
+        invoice_number = f"INV-{visit.id}-{visit.created_at.strftime('%Y%m%d%H%M%S')}"
+        invoice = Invoice.objects.create(
+            visit=visit,
+            invoice_number=invoice_number,
+            amount=visit.visit_fee,
+            payment_link=payment_url  
+        )
+        return invoice
 
-class VerifyPaymentView(View):
-    def get(self, request, *args, **kwargs):
-        ref_id = request.GET.get('refId')
-        success = request.GET.get('success')
+    def send_invoice_sms(self, phone_number, invoice):
+        """
+        ارسال پیامک حاوی لینک فاکتور و لینک پرداخت به بیمار
+        """
+        invoice_url = f"https://pay.arzdex.shop/visits/invoices/{invoice.invoice_number}/"
+        api_key = settings.KAVENEGAR_API_KEY  # استفاده از کلید API واقعی
+        template = "send-payment-link"  # نام الگوی پیامک تعریف شده در پنل کاوه‌نگار
+        send_paymentlink_sms(api_key, phone_number, invoice_url, template)
 
-        # بررسی موفقیت تراکنش
-        if success == '1':
-            payment = PaymentModel.objects.get(authority_id=ref_id)
 
-            # ارسال درخواست تأیید به نوین‌پال
-            verify_data = {
-                "api_key": settings.NOVINPAL_API_KEY,
-                "ref_id": ref_id
-            }
-            response = requests.post(settings.NOVINPAL_VERIFY_URL, json=verify_data)
-            response_data = response.json()
+class InvoiceDetailView(View):
+    def get(self, request, invoice_number, *args, **kwargs):
+        try:
+            invoice = Invoice.objects.get(invoice_number=invoice_number)
+            return render(request, 'visits/invoice_detail.html', {'invoice': invoice})
+        except Invoice.DoesNotExist:
+            return HttpResponse("فاکتور پیدا نشد.", status=404)
 
-            if response_data.get('status') == 1:
-                # تراکنش موفق
-                payment.status = PaymentStatusType.success
-                payment.ref_id = response_data['refNumber']
-                payment.save()
 
-                visit = Visit.objects.get(payment=payment)
-                visit.is_paid = True
-                visit.save()
+class CreatePaymentLinkView(View):
+    def post(self, request, invoice_number, *args, **kwargs):
+        invoice = get_object_or_404(Invoice, invoice_number=invoice_number)
+        visit = invoice.visit
+        
+        payment_url = self.create_payment_url(visit)
+        
+        if payment_url:
+            invoice.payment_link = payment_url
+            invoice.save()
 
-                return render(request, 'visits/payment_success.html', {
-                    'message': "پرداخت موفقیت‌آمیز بود."
-                })
-            else:
-                # تراکنش ناموفق
-                payment.status = PaymentStatusType.failed
-                payment.save()
-                return render(request, 'visits/payment_failed.html', {
-                    'message': "پرداخت ناموفق بود."
-                })
+            self.send_invoice_sms(visit.phone_number, invoice)
+            
+            return redirect('visits:invoice_detail', invoice_number=invoice_number)
+        else:
+            return HttpResponse("خطا در ایجاد لینک پرداخت. لطفاً دوباره تلاش کنید.", status=500)
 
-        # در صورت عدم موفقیت در پرداخت یا تایید، به صفحه خطا بروید
-        return render(request, 'visits/payment_failed.html', {
-            'message': "پرداخت ناموفق بود."
-        })
+    def create_payment_url(self, visit):
+        """
+        ایجاد لینک پرداخت از طریق API نوین‌پال
+        """
+        payment_data = {
+            "api_key": settings.NOVINPAL_API_KEY,
+            "amount": int(visit.visit_fee * 10),  
+            "return_url": settings.NOVINPAL_RETURN_URL,
+            "order_id": f"VISIT-{visit.id}",
+            "description": f"پرداخت ویزیت برای {visit.patient_name}",
+            "mobile": visit.phone_number
+        }
+        response = requests.post(settings.NOVINPAL_REQUEST_URL, json=payment_data)
+        response_data = response.json()
+
+        if response_data.get('status') == 1:
+            payment = PaymentModel.objects.create(
+                authority_id=response_data['refId'],
+                amount=visit.visit_fee,
+                status=PaymentStatusType.pending
+            )
+            visit.payment = payment
+            visit.save()
+
+            return f"{settings.NOVINPAL_START_URL}{response_data['refId']}"
+        else:
+            return None
+
+    def send_invoice_sms(self, phone_number, invoice):
+        """
+        ارسال پیامک حاوی لینک فاکتور و لینک پرداخت به بیمار
+        """
+        # لینک فاکتور
+        invoice_url = f"https://pay.arzdex.shop/visits/invoices/{invoice.invoice_number}/"
+        api_key = settings.KAVENEGAR_API_KEY 
+        template = "send-payment-link"  
+        # ارسال پیامک
+        send_paymentlink_sms(api_key, phone_number, invoice_url, template)
+
+
+class PaymentListView(ListView):
+    model = Visit
+    template_name = 'visits/payment_report.html'
+    context_object_name = 'visits'
+
+    def get_queryset(self):
+        doctor = self.request.user
+        
+        status = self.kwargs.get('status')
+        
+        return Visit.objects.filter(doctor=doctor, payment__status=status).select_related('payment', 'task')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        status = self.kwargs.get('status')
+
+        if status == 1:
+            context['title'] = 'پرداخت‌های در انتظار'
+        elif status == 2: 
+            context['title'] = 'پرداخت‌های موفق'
+        elif status == 3:
+            context['title'] = 'پرداخت‌های ناموفق'
+
+        for visit in context['visits']:
+            visit.patient_type_display = dict(PatientType.choices).get(visit.patient_type)
+            visit.task_name = visit.task.name if visit.task else "بدون وظیفه"
+
+        return context

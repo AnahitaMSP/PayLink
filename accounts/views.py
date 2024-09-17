@@ -21,9 +21,17 @@ from .models import User
 from datetime import timedelta
 from django.utils import timezone
 import requests
-
 from django.http import JsonResponse
 from .models import City
+from .models import Profile, Specialty, SubSpecialty
+from django.views.generic.edit import UpdateView
+from django.core.exceptions import PermissionDenied
+
+from django.views.generic.edit import CreateView
+from .models import Task
+from .forms import TaskForm
+
+from django.shortcuts import render, get_object_or_404
 
 def load_cities(request):
     province_id = request.GET.get('province_id')
@@ -46,25 +54,24 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         # اطمینان از اینکه کاربر فقط پروفایل خودش را ببیند
-        messages.success(self.request, 'ثبت‌نام با موفقیت انجام شد.')
-
         return self.request.user.user_profile
 
+    def form_valid(self, form):
+        # اگر فرم معتبر باشد، پیام موفقیت اضافه کنید
+        messages.success(self.request, 'پروفایل با موفقیت به‌روزرسانی شد.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # چاپ خطاها در صورت نامعتبر بودن فرم
+        print(form.errors)  # چاپ خطاها در کنسول
+        for field in form:
+            print(f"Errors in {field.name}: {field.errors}")
+
+        return super().form_invalid(form)
     
 
 def send_verification_sms(api_key, receptor, token, template, message_type='sms'):
 
-    
-    """
-    ارسال پیامک تایید با استفاده از API Kavenegar
-
-    :param api_key: کلید API معتبر Kavenegar
-    :param receptor: شماره گیرنده (با کد کشور و بدون فاصله)
-    :param token: کد تایید
-    :param template: نام الگوی تعریف شده
-    :param message_type: نوع پیام (پیش‌فرض 'sms')
-    :return: پاسخ API
-    """
     url = f'https://api.kavenegar.com/v1/{api_key}/verify/lookup.json'
     params = {
         'receptor': receptor,
@@ -75,7 +82,23 @@ def send_verification_sms(api_key, receptor, token, template, message_type='sms'
     
     response = requests.get(url, params=params)
     return response.json()
-# مرحله اول: دریافت شماره تلفن
+
+class ProfileTaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'accounts/add_task.html'
+    success_url = reverse_lazy('accounts:add_task')
+
+    def form_valid(self, form):
+        form.instance.profile = self.request.user.user_profile  # اتصال وظیفه به پروفایل پزشک
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # دریافت لیست وظایف مربوط به پروفایل کاربر جاری
+        context['tasks'] = Task.objects.filter(profile=self.request.user.user_profile)
+        return context
+    
 class RegistrationStepOneView(View):
     template_name = 'accounts/registration_step_1.html'
     form_class = PhoneNumberForm
@@ -120,7 +143,6 @@ class RegistrationStepOneView(View):
             return redirect('accounts:registration_step_two')
 
         return render(request, self.template_name, {'form': form})
-# مرحله دوم: تایید کد
 class RegistrationStepTwoView(View):
     template_name = 'accounts/registration_step_2.html'
     form_class = VerifyCodeForm
@@ -173,7 +195,6 @@ class RegistrationStepTwoView(View):
 
         return render(request, self.template_name, {'form': form})
 
-# مرحله سوم: انتخاب رمز عبور
 class RegistrationStepThreeView(View):
 
     template_name = 'accounts/registration_step_3.html'

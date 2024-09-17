@@ -1,0 +1,110 @@
+
+{% block content %}
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <!-- CSS Implementing Plugins -->
+    <link rel="stylesheet" href="{% static 'css/vendor.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/font/bootstrap-icons.css' %}">
+
+    <!-- CSS Front Template -->
+    <link rel="stylesheet" href="{% static 'css/theme.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/toastify/toastify.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  </head>
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: #333;
+  direction: rtl;
+}
+
+
+.container {
+  position: relative;
+  max-width: 700px;
+  width: 100%;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.container header {
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
+}
+
+header h2 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+
+header h3 {
+    font-size: 1rem;
+}
+
+
+.container .form {
+  margin-top: 30px;
+}
+
+
+.button-link {
+    display: inline-block; /* برای قرارگیری صحیح با سایر عناصر */
+    height: 40px;
+    width: 100%;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center; /* برای وسط‌چین کردن متن */
+    line-height: 40px; /* برای وسط‌چین کردن متن عمودی */
+    text-decoration: none; /* حذف خط زیر لینک */
+    border: none;
+    margin-top: 30px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    background-color: rgb(103, 106, 251);
+    /* اضافه کردن جلوه‌های هور و تمرکز */
+}
+
+
+
+  </style>
+  <body>
+    <div class="container">
+      <header>
+        <h2> لینک پرداخت ارسال شد</h2>
+      </header>
+        <a href="{{ payment_url }}"  , class="button-link"> ثبت کاربر جدید</a>
+
+        
+    </div>
+  </body>
+</html>
+{% endblock content %}

@@ -22,7 +22,6 @@ class UserType(models.IntegerChoices):
     superuser = 3, _("superuser")
     provider = 4, _("provider")
 
-
 class UserManager(BaseUserManager):
     """
     Custom user model manager where phone number is the unique identifier
@@ -37,7 +36,7 @@ class UserManager(BaseUserManager):
             raise ValueError(_("The Phone number must be set"))
         user = self.model(phone_number=phone_number, **extra_fields)
         user.set_password(password)
-        user.save(using=self._db)  # اضافه کردن using برای سازگاری
+        user.save(using=self._db) 
         return user
 
     def create_superuser(self, phone_number, password=None, **extra_fields):
@@ -56,7 +55,6 @@ class UserManager(BaseUserManager):
             raise ValueError(_("Superuser must have is_superuser=True."))
         return self.create_user(phone_number, password, **extra_fields)
 
-
 class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=12, null=True, blank=True , unique=True, validators=[validate_iranian_cellphone_number])
     email = models.EmailField(_("email address"), null=True, blank=True)  # nullable ایمیل
@@ -70,14 +68,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated_date = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "phone_number"
-    REQUIRED_FIELDS = []  # چون حالا phone_number اصلی است، می‌توانید ایمیل را حذف کنید
-
+    REQUIRED_FIELDS = [] 
     objects = UserManager()
 
     def __str__(self):
-        return self.phone_number if self.phone_number else "کاربر بدون شماره"  # استفاده از شماره تلفن برای نمایش
-
-
+        return self.phone_number if self.phone_number else "کاربر بدون شماره" 
 
 class Province(models.Model):
     name = models.CharField(max_length=255, unique=True, null=True, blank=True)
@@ -92,14 +87,28 @@ class City(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+class Specialty(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class SubSpecialty(models.Model):  
+    name = models.CharField(max_length=255, unique=True)
+    specialty = models.ForeignKey(Specialty, on_delete=models.CASCADE, related_name='subspecialties')
+
+    def __str__(self):
+        return f"{self.name} - {self.specialty.name}"
+
+
 
 class Profile(models.Model):
     user = models.OneToOneField('User', on_delete=models.CASCADE, related_name="user_profile")
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     job = models.ForeignKey(ServiceType, on_delete=models.SET_NULL, null=True, blank=True, related_name='profiles')
-    image = models.ImageField(upload_to="profile/", default="profile/default.png")
+    image = models.ImageField(upload_to="profile/", default="profile/default.png", null=True, blank=True)
     national_code = models.CharField(
         max_length=10,
         validators=[validate_national_code],
@@ -122,17 +131,24 @@ class Profile(models.Model):
         blank=True
     )
 
-    province = models.ForeignKey(Province, on_delete=models.CASCADE ,null=True, blank=True)  # انتخاب استان
-    city = models.ForeignKey(City, on_delete=models.CASCADE,null=True, blank=True)  # انتخاب شهر
-    address = models.CharField(max_length=200,null=True, blank=True)  # فیلد آدرس
+    specialties = models.ForeignKey(Specialty,on_delete=models.CASCADE , blank=True,null=True, related_name='profiles')
+    sub_specialties = models.ForeignKey(SubSpecialty,on_delete=models.CASCADE , blank=True,null=True, related_name='profiles')
+
+
+
+    province = models.ForeignKey(Province, on_delete=models.CASCADE ,null=True, blank=True)  
+    city = models.ForeignKey(City, on_delete=models.CASCADE,null=True, blank=True) 
+    address = models.CharField(max_length=200,null=True, blank=True) 
     tell_phone = models.CharField(
         max_length=15,
-        validators=[validate_fixed_phone] ,null=True, blank=True # اضافه کردن ولیدیشن
+        validators=[validate_fixed_phone] ,null=True, blank=True 
     )
     gender = models.CharField(max_length=10, choices=[('male', 'مرد'), ('female', 'زن'), ('other', 'سایر')],null=True, blank=True)
+    visit_fee = models.DecimalField(max_digits=200, decimal_places=0, default=0)
     
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+
 
     def get_fullname(self):
         if self.first_name or self.last_name:
@@ -148,7 +164,15 @@ def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+class Task(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True ,related_name='profile')  # ارتباط با پزشک
 
+    name = models.CharField(max_length=255)
+    fee = models.DecimalField(max_digits=200, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.name} - {self.fee}"    
+    
         
 class VerificationCode(models.Model):
     phone_number = models.CharField(max_length=12, unique=True)

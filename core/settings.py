@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY=config("SECRET_KEY",default='django-insecure-%)kj#qu4+m$ccy4iy6a!brgb-&3*(2&bvfs*fqj6zq!k&z#s4')
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -54,7 +54,9 @@ MIDDLEWARE = [
 ]
 INTERNAL_IPS = [
     '127.0.0.1',
-    # در صورت استفاده از Docker، می‌توانید IP مربوطه را اضافه کنید
+    'pay.arzdex.shop',
+    'www.pay.arzdex.shop',
+    
 ]
 ROOT_URLCONF = 'core.urls'
 
@@ -123,11 +125,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATIC_ROOT = BASE_DIR / 'media'
+STATIC_ROOT = '/home/payarzde/repositories/PayLink/static'
+STATIC_ROOT = '/home/payarzde/repositories/PayLink/media'
 
 STATICFILES_DIRS=[
     BASE_DIR / 'static'
@@ -141,7 +143,7 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
 AUTH_PASSWORD_VALIDATORS = []
-
+KAVENEGAR_API_KEY='6E746B36304649736E304177367A307175776575365A6D772B716858755833494D634553355066755445513D'
 # payment gateway settings
 MERCHANT_ID = config("MERCHANT_ID",default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")
 SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)

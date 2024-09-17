@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فاکتور</title>
+</head>
+<body>
+    <h1>فاکتور شماره {{ invoice.invoice_number }}</h1>
+    <p>بیمار: {{ invoice.visit.patient_name }}</p>
+    <p>تاریخ صدور: {{ invoice.issue_date }}</p> <!-- استفاده از تاریخ ایجاد فاکتور -->
+    <p>مبلغ: {{ invoice.amount }} تومان</p>
+
+
+    <form action="{% url 'visits:create_payment_link' invoice.invoice_number %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">ساخت لینک پرداخت جدید</button>
+
+
+    {% if not invoice.visit.is_paid %}
+        <!-- نمایش لینک پرداخت فقط اگر پرداخت انجام نشده باشد -->
+        <p>برای پرداخت لطفاً بر روی لینک زیر کلیک کنید:</p>
+        <a href="{{ invoice.payment_link }}" target="_blank">پرداخت</a> <!-- لینک پرداخت از فاکتور -->
+    {% else %}
+        <p>پرداخت انجام شده است.</p>        
+    {% endif %}
+</body>
+</html>

@@ -4,7 +4,7 @@ from .models import Profile ,ServiceType
 from django.contrib.auth import get_user_model
 from .models import VerificationCode
 from django.contrib.sessions.models import Session
-from .models import Province, City
+from .models import Province, City,Specialty,SubSpecialty,Task
 
 User = get_user_model()
 
@@ -84,14 +84,29 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ('profile', 'name', 'fee')  # ستون‌های نمایش در لیست
+    list_filter = ('profile',)  # فیلتر بر اساس پروفایل پزشک
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # اطمینان از اینکه کاربر فقط وظایف مربوط به پروفایل خودش را ببیند
+        if not request.user.is_superuser:
+            return qs.filter(profile=request.user.profile)
+        return qs
+    
 
 class CustomProfileAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "first_name", "last_name")
     list_filter = ("user__type",)  # فیلتر بر اساس نوع کاربر (User Type)
     search_fields = ("first_name", "last_name", "user__phone_number")
 
+admin.site.register(Specialty)
+admin.site.register(SubSpecialty)
 
 admin.site.register(Profile, CustomProfileAdmin)
+admin.site.register(Task, TaskAdmin)
+
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(VerificationCode, VerificationCodeAdmin)
 

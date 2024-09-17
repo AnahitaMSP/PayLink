@@ -1,155 +1,241 @@
-{% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<style>
-    /* استایل برای کانتینر اصلی */
-    .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f8f9fa;
-        border-radius: 12px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    }
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <style>
 
-    /* استایل برای عنوان اصلی */
-    h1 {
-        font-size: 2.5rem;
-        color: #343a40;
-        margin-bottom: 20px;
-        font-weight: 700;
-    }
+@font-face {
+  font-family: iransas;
+  src: url(./IRANSansWeb\(FaNum\).woff);
+}
 
-    /* استایل برای عنوان ثانویه */
-    h2 {
-        font-size: 1.8rem;
-        color: #495057;
-        margin-bottom: 20px;
-        font-weight: 600;
-    }
+* {
+  font-family: iransas, sans-serif;
+}
 
-    /* استایل برای دکمه‌ها */
-    .btn {
-        font-size: 1rem;
-        font-weight: 600;
-        padding: 12px 24px;
-        border-radius: 8px;
-        text-transform: uppercase;
-        border: none;
-        transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-    }
+.frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 400px;
+  /* margin-top: -200px; */
+  /* margin-left: -200px; */
+  border-radius: 2px;
+  box-shadow: 1px 2px 10px 0px rgba(0, 0, 0, 0.3);
+  background: #ca7c4e;
+  background: -webkit-linear-gradient(bottom left, #eebe6c 0%, #ca7c4e 100%);
+  background: -moz-linear-gradient(bottom left, #eebe6c 0%, #ca7c4e 100%);
+  background: -o-linear-gradient(bottom left, #eebe6c 0%, #ca7c4e 100%);
+  background: linear-gradient(to top right, #eebe6c 0%, #ca7c4e 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#EEBE6C', endColorstr='#CA7C4E',GradientType=1 );
+  color: #786450;
+  font-family: "Open Sans", Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-    .btn-primary {
-        background-color: #007bff;
-        color: #fff;
-    }
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 350px;
+  width: 520px;
+  background: #fff;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 10px 10px 15px 0 rgba(0, 0, 0, 0.3);
+}
 
-    .btn-primary:hover {
-        background-color: #0056b3;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
+.profile {
+  float: left;
+  width: 400px;
+  height: 320px;
+  text-align: center;
+}
+.profile .image {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  margin: 38px auto 0 auto;
+}
+.profile .image .circle-1,
+.profile .image .circle-2 {
+  position: absolute;
+  box-sizing: border-box;
+  width: 76px;
+  height: 76px;
+  top: -3px;
+  left: -3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #786450 #786450 #786450 transparent;
+  border-radius: 50%;
+  transition: all 1.5s ease-in-out;
+}
+.profile .image .circle-2 {
+  width: 82px;
+  height: 82px;
+  top: -6px;
+  left: -6px;
+  border-color: #786450 transparent #786450 #786450;
+}
+.profile .image img {
+  display: block;
+  border-radius: 50%;
+  background: #f5e8df;
+}
+.profile .image:hover {
+  cursor: pointer;
+}
+.profile .image:hover .circle-1,
+.profile .image:hover .circle-2 {
+  transform: rotate(360deg);
+}
+.profile .image:hover .circle-2 {
+  transform: rotate(-360deg);
+}
+.profile .name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+.profile .job {
+  font-size: 11px;
+  line-height: 15px;
+}
+.profile .actions {
+  margin-top: 33px;
+}
+.profile .actions .btn {
+  display: block;
+  width: 134px;
+  height: 30px;
+  margin: 0 auto 10px auto;
+  background: none;
+  border: 1px solid #786450;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+  color: #786450;
+  cursor: pointer;
+}
+.profile .actions .btn:hover {
+  background: #786450;
+  color: #fff;
+}
 
-    .btn-light {
-        background-color: #ffffff;
-        color: #495057;
-        border: 1px solid #dee2e6;
-    }
+.btn-information:hover {
+    background: #2673d8 !important;
+    color: #fff !important;
+}
 
-    .btn-light:hover {
-        background-color: #f1f3f5;
-        border-color: #ced4da;
-    }
+.btn-vizit:hover {
+    background: #348804 !important;
+    color: #fff !important;
+}
 
-    .btn-danger {
-        background-color: #dc3545;
-        color: #fff;
-    }
+.btn-close:hover {
+    background: #d82626 !important;
+    color: #fff !important;
+}
 
-    .btn-danger:hover {
-        background-color: #c82333;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
+.stats {
+  float: right;
+}
+.stats .box {
+  box-sizing: border-box;
+  width: 120px;
+  height: 116px;
+  background: #f5e8df;
+  text-align: center;
+  padding-top: 39px;
+  transition: all 0.4s ease-in-out;
+}
+.stats .box:hover {
+  background: #e1cfc2;
+  cursor: pointer;
+}
+.stats .box:nth-child(2) {
+  margin: 1px 0;
+}
+.stats span {
+  display: block;
+}
+.stats .value {
+  font-size: 12px;
+  font-weight: 600;
+}
+.stats .parameter {
+  font-size: 14px;
+}
 
-    .btn-warning {
-        background-color: #ffc107;
-        color: #212529;
-    }
+  </style>
+  <body>
+    <div class="frame">
+        {% if request.user.is_authenticated %}
 
-    .btn-warning:hover {
-        background-color: #e0a800;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    /* استایل برای دکمه‌های آیکون */
-    .btn-icon {
-        padding: 0;
-        border: none;
-        background: none;
-    }
-
-    .avatar {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        border: 3px solid #007bff;
-        background-color: #e9ecef;
-        overflow: hidden;
-    }
-
-    .avatar-img {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-    }
-
-    /* استایل برای بخش‌های متنی */
-    .text-center {
-        text-align: center;
-    }
-
-    .mb-4 {
-        margin-bottom: 1.5rem;
-    }
-
-    .mt-5 {
-        margin-top: 3rem;
-    }
-</style>
-
-<div class="container mt-5">
-    <h1 class="text-center mb-4">خوش آمدید، {{ request.user.user_profile.get_fullname }}</h1>
-
-    {% if request.user.is_authenticated %}
-        <div class="text-center mb-4">
-            <h2>پروفایل خود را تکمیل کنید</h2>
-        </div>
+      <div class="center">
+        <div class="profile">
+          <div class="image">
+            <div class="circle-1"></div>
+            <div class="circle-2"></div>
+            <img src="{{ request.user.user_profile.image.url }}" width="70" height="70" alt="logo" />
+          </div>
         
-        <div class="text-center mb-4">
-            <button class="btn btn-light btn-icon" id="dropdownMenuLink" aria-haspopup="true" aria-expanded="false">
-                <span class="avatar avatar-sm avatar-circle">
-                    <img class="avatar-img" src="{{ request.user.user_profile.image.url }}" alt="Profile Image">
-                </span>
-            </button>
+          <div class="name">خوش آمدید</div>
+          <div class="job">{{ request.user.user_profile.get_fullname }}</div>
+
+          <div class="actions">
+            <button class="btn btn-information"><a href="{% url 'accounts:profile' %}" >تکمیل اطلاعات شخصی</a></button>
+            <button class="btn btn-information"><a href="{% url 'accounts:add_task' %}" >خدمات و هزینه خدمات را مشخص کنید</a></button>
+
+            <button class="btn btn-vizit"> <a href="{% url 'visits:create_visit' %}" >ثبت ویزیت</a></button>
+            <a href="{% url 'accounts:logout' %}">خروج</a>
+          </div>
         </div>
 
-        <div class="text-center mb-4">
-
-            <a href="{% url 'accounts:profile' %}" class="btn btn-primary">تکمیل اطلاعات شخصی</a>
-            <a href="{% url 'accounts:logout' %}" class="btn btn-danger">خروج</a>
+        <div class="stats">
+          <div class="box">
+            <a href="{% url 'visits:payment_list' 2 %}">
+            <span class="value">پرداخت‌های</span>
+            <span class="parameter">موفق</span></a>
+          </div>
+          <div class="box">
+            <a href="{% url 'visits:payment_list' 1 %}"> 
+            <span class="value">پرداخت‌های</span>
+            <span class="parameter">در انتظار</span>
+                </a> 
+          </div>
+          <div class="box">
+            <a href="{% url 'visits:payment_list' 3 %}" >
+            <span class="value">پرداخت‌های</span>
+            <span class="parameter">ناموفق</span>
+                </a>
+          </div>
         </div>
+      </div>
 
-        <div class="text-center mb-4">
-            <a href="{% url 'visits:create_visit' %}" class="btn btn-warning">برای ثبت ویزیت، اینجا کلیک کنید</a>
-        </div>
+      {% else %}
 
-    {% else %}
-        <div class="text-center mb-4">
-            <a class="btn btn-primary btn-lg" href="{% url 'accounts:login' %}">ورود</a>
-            <a class="btn btn-secondary btn-lg" href="{% url 'accounts:registration_step_one' %}">ثبت نام</a>
-        </div>
+      <div class="text-center mb-4">
+        <a class="btn btn-primary btn-lg" href="{% url 'accounts:login' %}">ورود</a>
+        <a class="btn btn-secondary btn-lg" href="{% url 'accounts:registration_step_one' %}">ثبت نام</a>
+        <a class="btn btn-secondary btn-lg" href="{% url 'website:conditions' %}"> صفحه قوانین ما</a>
+
+    </div>
+
     {% endif %}
-</div>
-
-{% endblock content %}
+    </div>
+  </body>
+</html>

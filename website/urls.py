@@ -4,5 +4,7 @@ app_name = "website"
 
 urlpatterns = [
     path("",views.IndexView.as_view(),name='index'),
+    path("conditions",views.ConditionsView.as_view(),name='conditions'),
+
 
 ]

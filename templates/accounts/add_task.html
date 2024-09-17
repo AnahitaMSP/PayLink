@@ -1,0 +1,38 @@
+
+{% block content %}
+  <h2>افزودن وظیفه جدید</h2>
+
+  <a href="{% url 'website:index' %}">&larr;</a>
+
+  <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">ذخیره</button>
+  </form>
+
+  <h2>لیست وظایف</h2>
+  {% if tasks %}
+    <table>
+      <thead>
+        <tr>
+          <th>نام وظیفه</th>
+          <th>قیمت</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in tasks %}
+          <tr>
+            <td>{{ task.name }}</td>
+            <td>{{ task.fee }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="2">هیچ وظیفه‌ای اضافه نشده است.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>هیچ وظیفه‌ای اضافه نشده است.</p>
+  {% endif %}
+{% endblock %}
