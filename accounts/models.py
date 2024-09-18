@@ -8,6 +8,7 @@ from django.core.validators import RegexValidator
 from accounts.validators import validate_iranian_cellphone_number,validate_national_code,validate_iban,validate_bank_card_number,validate_fixed_phone
 from django.utils import timezone
 import datetime
+from django.core.exceptions import ValidationError
 
 
 class ServiceType(models.Model):
@@ -88,20 +89,27 @@ class City(models.Model):
     def __str__(self):
         return self.name
 
+class SpecialtyType(models.IntegerChoices):
+    general = 1, _("general")
+    specialist = 2, _("specialist")
+    super_specialist = 3, _("super_specialist")
+
 class Specialty(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    Specialtytype = models.IntegerField(choices=SpecialtyType.choices, default=SpecialtyType.general.value)
+    name = models.CharField(max_length=255, unique=True , null=True, blank=True)
+
+    def clean(self):
+        # اجازه ندهید که نوع عمومی (general) نام وارد کند
+        if self.Specialtytype == SpecialtyType.general and not self.name:
+            raise ValidationError("Name must be provided for specialist and super specialist.")
+
+    def save(self, *args, **kwargs):
+        self.clean()  # اعتبارسنجی را قبل از ذخیره‌سازی انجام دهید
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
-
-class SubSpecialty(models.Model):  
-    name = models.CharField(max_length=255, unique=True)
-    specialty = models.ForeignKey(Specialty, on_delete=models.CASCADE, related_name='subspecialties')
-
-    def __str__(self):
-        return f"{self.name} - {self.specialty.name}"
-
-
+    
 
 class Profile(models.Model):
     user = models.OneToOneField('User', on_delete=models.CASCADE, related_name="user_profile")
@@ -132,10 +140,6 @@ class Profile(models.Model):
     )
 
     specialties = models.ForeignKey(Specialty,on_delete=models.CASCADE , blank=True,null=True, related_name='profiles')
-    sub_specialties = models.ForeignKey(SubSpecialty,on_delete=models.CASCADE , blank=True,null=True, related_name='profiles')
-
-
-
     province = models.ForeignKey(Province, on_delete=models.CASCADE ,null=True, blank=True)  
     city = models.ForeignKey(City, on_delete=models.CASCADE,null=True, blank=True) 
     address = models.CharField(max_length=200,null=True, blank=True) 

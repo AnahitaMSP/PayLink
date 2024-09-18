@@ -23,7 +23,7 @@ from django.utils import timezone
 import requests
 from django.http import JsonResponse
 from .models import City
-from .models import Profile, Specialty, SubSpecialty
+from .models import Profile, Specialty
 from django.views.generic.edit import UpdateView
 from django.core.exceptions import PermissionDenied
 
@@ -128,7 +128,7 @@ class RegistrationStepOneView(View):
             print(verification_code)
 
             # کلید API و الگوی پیامک را اینجا تنظیم کنید
-            api_key = '6E746B36304649736E304177367A307175776575365A6D772B716858755833494D634553355066755445513D'
+            api_key = '61484C346A6933724834676C4C6E4F6B7A4D666D646C5A676A422F6A2B63467263456B324753354F4F62593D'
             template = 'send-register-code'
             
             # ارسال کد تایید
@@ -275,7 +275,6 @@ class ForgotPasswordView(View):
 
         return render(request, self.template_name, {'form': form})
     
-
 class VerifyCodeView(View):
     template_name = 'accounts/verify_code.html'
     form_class = VerifyCodeForm
@@ -305,7 +304,6 @@ class VerifyCodeView(View):
 
         return render(request, self.template_name, {'form': form})
     
-
 class ResetPasswordView(View):
     template_name = 'accounts/set_password.html'
 
@@ -335,7 +333,6 @@ class ResetPasswordView(View):
 
         return render(request, self.template_name, {'form': form})
     
-
 class PasswordChangeSuccessView(View):
     template_name = 'accounts/password_change_success.html'
 

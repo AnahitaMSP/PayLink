@@ -10,19 +10,20 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+print(BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY=config("SECRET_KEY",default='django-insecure-%)kj#qu4+m$ccy4iy6a!brgb-&3*(2&bvfs*fqj6zq!k&z#s4')
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -54,8 +55,8 @@ MIDDLEWARE = [
 ]
 INTERNAL_IPS = [
     '127.0.0.1',
-    'pay.arzdex.shop',
-    'www.pay.arzdex.shop',
+    'panel.doctordex.ir',
+    'www.panel.doctordex.ir'
     
 ]
 ROOT_URLCONF = 'core.urls'
@@ -126,14 +127,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATIC_ROOT = '/home/payarzde/repositories/PayLink/static'
-STATIC_ROOT = '/home/payarzde/repositories/PayLink/media'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+print(STATIC_ROOT)
+print(MEDIA_ROOT)
+
 
 STATICFILES_DIRS=[
     BASE_DIR / 'static'
 ]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -143,13 +149,13 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
 AUTH_PASSWORD_VALIDATORS = []
-KAVENEGAR_API_KEY='6E746B36304649736E304177367A307175776575365A6D772B716858755833494D634553355066755445513D'
+KAVENEGAR_API_KEY='61484C346A6933724834676C4C6E4F6B7A4D666D646C5A676A422F6A2B63467263456B324753354F4F62593D'
 # payment gateway settings
 MERCHANT_ID = config("MERCHANT_ID",default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")
 SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
 
 NOVINPAL_API_KEY = "28266702-0fed-4669-9f0a-b70fc7af228a"
-NOVINPAL_RETURN_URL = "https://panel.arzdex.shop/payment/verify/"
+NOVINPAL_RETURN_URL = "https://panel.doctordex.ir//payment/verify/"
 NOVINPAL_REQUEST_URL = "https://api.novinpal.ir/invoice/request"
 NOVINPAL_START_URL = "https://api.novinpal.ir/invoice/start/"
 NOVINPAL_VERIFY_URL = "https://api.novinpal.ir/invoice/verify"

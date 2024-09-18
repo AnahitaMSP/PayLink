@@ -9,10 +9,14 @@ from accounts.models import Task
 
 
 class PatientType(models.TextChoices):
-    INDIVIDUAL = 'individual', _('شخص')
-    COMPANY = 'company', _('شرکت')
+    INDIVIDUAL = 'individual', _(' حقیقی')
+    COMPANY = 'company', _('حقوقی')
     CLINIC = 'clinic', _('کلینیک')
     LABORATORY = 'laboratory', _('آزمایشگاه')
+    HOSPITAL = 'hospital', _('بیمارستان')
+    OTHER = 'other', _('سایر')
+
+
 
 class Visit(models.Model):
     doctor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='visits')

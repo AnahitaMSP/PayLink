@@ -4,9 +4,14 @@ from .models import Profile ,ServiceType
 from django.contrib.auth import get_user_model
 from .models import VerificationCode
 from django.contrib.sessions.models import Session
-from .models import Province, City,Specialty,SubSpecialty,Task
+from .models import Province, City,Specialty,Task
 
 User = get_user_model()
+
+class SpecialtyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'Specialtytype')
+    list_filter = ('Specialtytype',)
+    search_fields = ('name',)
 
 class ServiceTypeAdmin(admin.ModelAdmin):
     list_display = ('name',)
@@ -94,27 +99,20 @@ class TaskAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             return qs.filter(profile=request.user.profile)
         return qs
-    
 
 class CustomProfileAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "first_name", "last_name")
     list_filter = ("user__type",)  # فیلتر بر اساس نوع کاربر (User Type)
     search_fields = ("first_name", "last_name", "user__phone_number")
 
-admin.site.register(Specialty)
-admin.site.register(SubSpecialty)
-
 admin.site.register(Profile, CustomProfileAdmin)
 admin.site.register(Task, TaskAdmin)
-
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(VerificationCode, VerificationCodeAdmin)
-
 admin.site.register(ServiceType, ServiceTypeAdmin)
 admin.site.register(Province)
 admin.site.register(City)
-
-
+admin.site.register(Specialty, SpecialtyAdmin)
 
 class SessionAdmin(admin.ModelAdmin):
     def _session_data(self, obj):

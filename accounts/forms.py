@@ -6,7 +6,7 @@ from django.contrib.auth.forms import SetPasswordForm
 from django import forms
 from .models import User
 from django.core.validators import RegexValidator
-from .models import Profile, Task,UserType,ServiceType, Specialty, SubSpecialty
+from .models import Profile, Task,UserType,ServiceType, Specialty
 
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
@@ -26,7 +26,7 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = [
             'first_name', 'last_name', 'image', 'job', 'national_code', 'iban', 
             'bank_card_number', 'province', 'city', 'address', 'tell_phone', 'gender', 
-            'specialties', 'sub_specialties' 
+            'specialties'
         ]
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'نام'}),
@@ -41,7 +41,6 @@ class ProfileUpdateForm(forms.ModelForm):
             'province': forms.Select(attrs={'class': 'form-control'}),
             'city': forms.Select(attrs={'class': 'form-control'}),
             'specialties': forms.SelectMultiple(attrs={'class': 'form-control', 'placeholder': 'تخصص'}),  
-            'sub_specialties': forms.SelectMultiple(attrs={'class': 'form-control', 'placeholder': ' فوق تخصص'}), 
         }   
 
     job = forms.ModelChoiceField(
@@ -75,11 +74,7 @@ class ProfileUpdateForm(forms.ModelForm):
         required=False,
         widget=forms.Select
     )
-    sub_specialties = forms.ModelChoiceField(
-        queryset=SubSpecialty.objects.all(),
-        required=False,
-        widget=forms.Select
-    )
+
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)

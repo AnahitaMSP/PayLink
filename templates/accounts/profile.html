@@ -3,192 +3,246 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="index.css" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
-
-
-    {% block content %}
-    <style>
+  <style>
 @font-face {
-    font-family: IRANSANSE;
-    src: url("{% static 'fonts/IRANSans/IRANSansWeb\(FaNum\).woff' %}");
-
+  font-family: iranSans;
+  src: url(./font/IRANSansWeb\(FaNum\).woff);
 }
 
-*{
-    margin: 0;
-    padding: 0;
-    outline: none;
-    box-sizing: border-box;
-    font-family: IRANSANSE, sans-serif;
+*,
+::before,
+::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: iranSans, sans-serif;
+  direction: rtl;
 }
 
+.header {
+  position: relative;
+  background-image: url(./image/pm-0216-med-img_5635-895-2.webp);
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100vh;
+  transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding: 80px 0px 00px 0px;
+  z-index: 9;
+  /* filter: blur(2px); */
+}
 
-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
-    direction: rtl;
+.cover {
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: transparent;
+  background-image: linear-gradient(310deg, #01d28eb3 0%, #fefefeeb 77%);
+  opacity: 1;
+  transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+}
+
+.article {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  padding: 30px 30px;
+  text-align: center;
+  box-shadow: 0px 0px 22px rgba(107, 107, 107, 0.1);
+  border-radius: 10px;
+  background-color: #ffffff99;
+}
+
+.article img {
+  width: 250px;
 }
 
 .container {
-    position: relative;
-    max-width: 700px;
-    width: 100%;
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  max-width: 700px;
+  width: 100%;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 .container header {
-    font-size: 1.5rem;
-    color: #333;
-    font-weight: 500;
-    text-align: center;
-    position: relative;
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
 }
 
 .container .form {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .form .input-box {
-    width: 100%;
-    margin-top: 20px;
+  width: 100%;
+  margin-top: 20px;
 }
 
-.input-box input:focus {
-    box-shadow: 0 0 8px #33333330;
-    border: 1px solid rgb(103, 106, 251)
+.form .input-box h3 {
+  text-align: justify;
+}
+
+.input-box input:focus-visible {
+  box-shadow: 0 0 8px #33333330 !important;
+  border: 1px solid rgb(103, 106, 251) !important;
 }
 
 .input-box label {
-    color: #333;
+  color: #333;
 }
 
 .form :where(.input-box input, .select-box) {
-    position: relative;
-    height: 40px;
-    width: 100%;
-    font-size: 0.8rem;
-    color: #707070;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 0 15px;
-    margin-top: 8px;
-}
-
-.form :where(.input-box input, .select-box)::-webkit-inner-spin-button {
-    display: none;
-}
-
-.form .box-colum {
-    display: flex;
-    column-gap: 15px;
+  position: relative;
+  height: 40px;
+  width: 100%;
+  font-size: 0.8rem;
+  background-color: transparent;
+  color: #707070;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 0 15px;
+  margin-top: 8px;
 }
 
 .select-box select {
-    height: 100%;
-    width: 100%;
-    outline: none;
-    border: none;
-    color: #707070;
-    font-size: 0.8rem;
+  background-color: transparent;
+}
+
+.form :where(.input-box input, .select-box)::-webkit-inner-spin-button {
+  display: none;
+  background-color: transparent;
+}
+
+.form .box-colum {
+  display: flex;
+  column-gap: 15px;
+}
+
+.select-box select {
+  height: 100%;
+  width: 100%;
+  outline: none;
+  border: none;
+  color: #707070;
+  font-size: 0.8rem;
 }
 
 .form button {
-    height: 40px;
-    width: 100%;
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 400;
-    border: none;
-    margin-top: 30px;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    background-color: rgb(103, 106, 251);
-    ;
+  height: 40px;
+  width: 100%;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 400;
+  border: none;
+  margin-top: 30px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background-image: linear-gradient(90deg, #3b676a 3%, #0052a8 100%);
 }
 
 .form button:hover {
-    background-color: rgb(88, 56, 250);
+  background-image: linear-gradient(90deg, #66bcc2 3%, #006cdf 100%);
 }
 
-
-.button{
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-}
-.button button{
-    width: 240px;
+.btn-exit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
-.button a{
-    display: block;
-    width: 240px;
-    height: 40px;
-    background-color: red;
-    text-decoration: none;
-    color: #fff;
-    text-align: center;
-    line-height: 40px;
-    border-radius: 6px;
-}
-.btn-back{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.btn-back a {
-    text-decoration: none;
-    font-size: 1.5rem;
-    color: #000;
-    border-radius: 6px;
-    padding: 0px 11px;
-    transition: 0.3s ease;
-}
-.btn-back a:hover {
-    background: #d3d3d3;
-}
-.select-box {
-    margin-bottom: 15px;
+.btn-exit button {
+  height: 40px;
+  width: 158px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 400;
+  border: none;
+  margin-top: 30px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  /* background-image: linear-gradient(90deg, #3b676a 3%, #0052a8 100%); */
 }
 
-.select-box label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+.btn-exit button:nth-child(1) {
+  background-color: #3F6B6F;
 }
 
-.form-control {
+.btn-exit button:nth-child(2) {
+  background-color: rgb(233, 52, 52);
+}
+
+.btn-exit button a {
+  text-decoration: none;
+  color: #fff;
+}
+
+@media screen and (max-width: 1024px) {
+  .article {
     width: 100%;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-}
-/* Responsive */
-@media screen and (max-width: 500px) {
-    .form .box-colum {
-        flex-wrap: wrap;
-    }
-    .form :where( .gender-option, .gender) {
-        row-gap: 15px;
-    }
+    top: 50%;
+    left: 50%;
+  }
 }
 
-    </style>
-    <section class="container">
-        <header>پروفایل کاربری</header>
+@media screen and (max-width: 480px) {
+  .article {
+    width: 100%;
+    box-shadow: none;
+    padding: 0 30px;
+    background-color: transparent;
+  }
+  .form h3 {
+    font-size: 14px;
+  }
+  .article h1 {
+    font-size: 1.3rem;
+  }
+  .article img {
+    margin-bottom: 0px;
+  }
+  .form .input-box {
+    margin-top: 0;
+  }
+  .btn-exit {
+    margin-top: 0;
+  }
+  .btn-exit button {
+    width: 140px;
+    margin: 25px 0 0px 0;
+  }
+  .btn-exit button a {
+    font-size: 0.8rem;
+  }
+}
+
+  </style>
+  <body>
+    <section class="header">
+      <div class="cover"></div>
+      <!-- <img src="./image/abstract-health-medical-science-healthcare-icon-di.jpg" alt=""> -->
+      <div class="article">
+        <img src="./DRDEX-logo.png" alt="logo" />
+        
 
         {% if form.errors %}
         <div class="alert alert-danger">
@@ -204,83 +258,74 @@ body {
             </ul>
         </div>
     {% endif %}
-      
-      <form method="POST" enctype="multipart/form-data" class="form">
 
-        {% csrf_token %}
-        <div class="input-box">
-        </div>
-        
-        <div class="input-box">
-        </div>
-        
-        <div class="input-box address">
-                <div class="btn-back">
-                    <h3>اطلاعات شخصی</h3>
-                    <a href="{% url 'website:index' %}">&larr;</a>
-                </div>
-                <input type="text" class="form-control" id="phone_number" value="{{ request.user.phone_number }}" disabled>
-                {{ form.first_name }}
-                {{ form.last_name }}
+        <form method="POST" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+
+          <div class="input-box"></div>
+
+          <div class="input-box"></div>
+
+          <div class="input-box address">
+            <h3>اطلاعات شخصی</h3>
+            {{ form.first_name }}
+            {{ form.last_name }}
             <div class="box-colum">
                 {{ form.national_code }}
+
                 {{ form.tell_phone }}
               <div class="select-box">
-                {{ form.job }}
+                    {{ form.job }}
               </div>
-              <div class="input-box">
-                <div class="select-box">
-                    <label for="specialties">تخصص:</label>
-                    {{ form.specialties }}
-                </div>
-                <div class="select-box">
-                    <label for="sub_specialties">فوق تخصص:</label>
-                    {{ form.sub_specialties }}
-                </div>
-            </div>
-            
-            </div>
-
             </div>
           </div>
-        </div>
 
-        <div class="input-box address">
-          <h3>اطلاعات بانکی</h3>
-          <div class="box-colum">
-            <div class="input-box">
-                {{ form.iban }}
+          <div class="input-box address">
+            <h3>تخصص</h3>
+            <div class="box-colum">
+
+
+              <div class="select-box">
+                {{ form.specialties }}
+              </div>
             </div>
+          </div>
 
-            <div class="input-box">
+          <div class="input-box address">
+            <h3>اطلاعات بانکی</h3>
+            <div class="box-colum">
+                {{ form.iban }}
                 {{ form.bank_card_number }}
             </div>
-
           </div>
-        </div>
 
-        <div class="input-box address">
-          <h3>آدرس</h3>
-          <div class="box-colum">
-            <div class="select-box">
-                {{ form.province }}
-            </div>
-            <div class="select-box">
+          <div class="input-box address">
+            <h3>آدرس</h3>
+            <div class="box-colum">
+              <div class="select-box">
+                    {{ form.province }}
+
+              </div>
+              <div class="select-box">
                 {{ form.city }}
+              </div>
             </div>
+            {{ form.address }}       
+           </div>
+
+
+           <button type="submit">ارسال اطلاعات</button>
+        </form>
+        <div class="btn-exit">
+            <button>
+              <a href="{% url 'website:index' %}">بازگشت به داشبورد</a>
+            </button>
+  
+            <button>
+              <a href="{% url 'accounts:logout' %}" >خروج</a>
+            </button>
           </div>
-          {{ form.address }}
-        </div>
-        <div class="button">
-        <button type="submit">ارسال اطلاعات</button>
-        <a href="{% url 'accounts:logout' %}" class="btn btn-danger">خروج از حساب کاربری</a>
-
-
-        
-        </div>
-
-        
-      </form>
+      </div>
     </section>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
@@ -329,6 +374,5 @@ body {
         }
         </script>
 
-{% endblock content %}
   </body>
 </html>

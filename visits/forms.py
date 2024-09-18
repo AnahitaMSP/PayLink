@@ -7,8 +7,7 @@ from accounts.models import Profile,Task
 class VisitForm(forms.ModelForm):
     task = forms.ModelChoiceField(
         queryset=Task.objects.none(),  # تسک‌های مربوط به پروفایل پزشک را بارگذاری می‌کند
-        empty_label='انتخاب وظیفه',
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control','placeholder': 'نوع خدمات'})
     )
     visit_fee = forms.DecimalField(
         max_digits=200, decimal_places=2,

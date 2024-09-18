@@ -1,84 +1,322 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link
+      href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    @font-face {
+  font-family: iranSans;
+  src: url(./font/IRANSansWeb\(FaNum\).woff);
+}
 
-{% block title %} ورود کد تایید {% endblock %}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: iranSans, sans-serif;
+}
 
-{% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header text-center">
-                    <h2 class="h4">کد تایید را وارد کنید</h2>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{% url 'accounts:registration_step_two' %}">
-                        {% csrf_token %}
-                        {{ form.code.label_tag }}<br>
-                        {{ form.code }}<br>
-                        <div>
+.header {
+  position: relative;
+  background-image: url(./image/pm-0216-med-img_5635-895-2.webp);
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100vh;
+  transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding: 80px 0px 00px 0px;
+  z-index: 9;
+  /* filter: blur(2px); */
+}
 
-                        <button type="submit" class="btn btn-primary">تایید کد</button>
+.cover {
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: transparent;
+  background-image: linear-gradient(310deg, #01D28EB3 0%, #FEFEFEEB 77%);
+  opacity: 1;
+  transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+}
 
-                    </div>
+.form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 880px;
+  height: 550px;
+}
 
-                    </form>
-                    <div class="mt-3">
-                        <p id="countdown">2:00</p>
-                        <form method="POST" action="{% url 'accounts:registration_step_two' %}">
-                            {% csrf_token %}
-                        <div>
-                            <button id="resend-button" name="resend_code" class="btn btn-link" style="display: none;">ارسال مجدد کد</button>
-                        </div>
-                    <div>
-                        <a class="btn btn-secondary btn-lg" href="{% url 'accounts:registration_step_one' %}">شماره موبایل اشتباه است</a>
-                    </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const countdownElement = document.getElementById("countdown");
-        const resendButton = document.getElementById("resend-button");
+.logo {
+  width: 250px;
+  margin: 0 auto;
+  display: block;
+}
 
-        let timer = localStorage.getItem("remainingTime");
-        timer = timer ? parseInt(timer, 10) : 120;  // اگر زمان ذخیره شده وجود نداشته باشد، از 2 دقیقه شروع کن
+#msform {
+  max-width: 800px;
+  margin: 50px auto;
+  text-align: center;
+  position: relative;
+}
+#msform fieldset {
+  background: white;
+  border: 0 none;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  width: 80%;
+  margin: 0 10%;
+  position: relative;
+}
+#msform fieldset:not(:first-of-type) {
+  display: none;
+}
 
-        function updateTimer() {
-            let minutes = Math.floor(timer / 60);
-            let seconds = timer % 60;
-            countdownElement.textContent = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+#msform input,
+#msform textarea {
+  font-size: 13px;
+  font-family: iranSans, sans-serif;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #2c3e50;
+}
+#msform .action-button {
+  width: 100px;
+  background: #27ae60;
+  font-weight: bold;
+  color: white;
+  border: 0 none;
+  border-radius: 1px;
+  cursor: pointer;
+  padding: 10px 5px;
+  margin: 10px 5px;
+}
+#msform .action-button:hover,
+#msform .action-button:focus {
+  box-shadow: 0 0 0 2px white, 0 0 0 3px #27ae60;
+}
+.fs-title {
+  text-transform: uppercase;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+.fs-subtitle {
+  font-weight: normal;
+  color: #666;
+  margin-bottom: 20px;
+}
+#progressbar {
+  margin-bottom: 30px;
+  overflow: hidden;
+  counter-reset: step;
+}
+#progressbar li {
+  list-style-type: none;
+  color: #444;
+  width: 33.33%;
+  float: left;
+  position: relative;
+}
+#progressbar li:before {
+  content: counter(step);
+  counter-increment: step;
+  display: block;
+  color: #333;
+  background: #ccc;
+  border-radius: 50%;
+  margin: 0 auto 5px auto;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+}
+#progressbar li:after {
+  content: "";
+  width: 100%;
+  height: 2px;
+  background: #ccc;
+  position: absolute;
+  left: -50%;
+  top: 14px;
+  z-index: -1;
+}
+#progressbar li:first-child:after {
+  content: none;
+}
+#progressbar li.active:before,
+#progressbar li.active:after {
+  background: #27ae60;
+  color: white;
+  /*font-family:FontAwesome;
+  content: "\f00c";*/
+}
 
-            if (timer <= 0) {
-                clearInterval(countdownInterval);
-                countdownElement.style.display = "none";
-                resendButton.style.display = "block";
-                localStorage.removeItem("remainingTime");  // پاک کردن زمان ذخیره شده
-            } else {
-                localStorage.setItem("remainingTime", timer);
-            }
+@media screen and (max-width: 480px) {
+  .form {
+    width: 100%;
+  }
+}
 
-            timer--;
+  </style>
+  <body>
+
+    <section class="header">
+      <div class="cover"></div>
+
+      <div class="form">
+        <img src="./image/DRDEX-logo.png" class="logo" alt="logo" />
+        <form id="msform" method="POST" action="{% url 'accounts:registration_step_two' %}">
+          <!-- progressbar -->
+          <ul id="progressbar">
+            <li class="active">شماره موبایل</li>
+            <li>احراز هویت</li>
+            <li>ایجاد رمز</li>
+          </ul>
+
+          <fieldset>
+            <h2 class="fs-title">احراز هویت</h2>
+            <!-- <h3 class="fs-subtitle">Your presence on the social network</h3> -->
+            {% csrf_token %}
+            {{ form.code }}
+            <!-- <input type="text" name="facebook" placeholder="Facebook" /> -->
+            <!-- <input type="text" name="gplus" placeholder="Google Plus" /> -->
+            <input
+              type="button"
+              name="previous"
+              class="previous action-button"
+              value="برگشت"
+            />
+            <button 
+            type="submit"
+            name="next"
+            class="next action-button"
+            value="احراز هویت"
+          >احراز هویت</button>
+          </fieldset>
+
+        </form>
+      </div>
+    </section>
+    
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"
+      integrity="sha512-0QbL0ph8Tc8g5bLhfVzSqxe9GERORsKhIn1IrpxDAgUsbBGz/V7iSav2zzW325XGd1OMLdL4UiqRJj702IeqnQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script type="text/javascript" src="script.js"></script>
+    <script>
+        var current_fs, next_fs, previous_fs; // fieldsets
+var left, opacity, scale; // fieldset properties which we will animate
+var animating; // flag to prevent quick multi-click glitches
+
+$(".next").click(function(){
+    if(animating) return false;
+    animating = true;
+
+    current_fs = $(this).parent();
+    next_fs = $(this).parent().next();
+
+    // بررسی اینکه آیا فیلدها پر شده‌اند
+    var inputs = current_fs.find("input");
+    var valid = true;
+
+    inputs.each(function() {
+        if ($(this).val() === "") {
+            valid = false;
+            $(this).css("border", "1px solid red"); // Show error in red
+        } else {
+            $(this).css("border", "1px solid #ccc"); // Reset border color
         }
-
-        const countdownInterval = setInterval(updateTimer, 1000);
-
-        resendButton.addEventListener("click", function () {
-            localStorage.removeItem("remainingTime");
-            // راه اندازی مجدد تایمر به 2 دقیقه برای ارسال مجدد کد
-            timer = 120;
-            countdownElement.style.display = "block";
-            resendButton.style.display = "none";
-            updateTimer();  // شروع تایمر از نو
-        });
     });
 
+    if (!valid) {
+        animating = false; // Prevent animation from continuing
+        return false; // Prevent going to the next step
+    }
 
+    // activate next step on progressbar using the index of next_fs
+    $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
 
-</script>
+    // show the next fieldset
+    next_fs.show(); 
+    // hide the current fieldset with style
+    current_fs.animate({opacity: 0}, {
+        step: function(now, mx) {
+            scale = 1 - (1 - now) * 0.2;
+            left = (now * 50)+"%";
+            opacity = 1 - now;
+            current_fs.css({
+                'transform': 'scale('+scale+')',
+                'position': 'absolute'
+            });
+            next_fs.css({'left': left, 'opacity': opacity});
+        }, 
+        duration: 800, 
+        complete: function(){
+            current_fs.hide();
+            animating = false;
+        }, 
+        easing: 'easeInOutBack'
+    });
+});
 
+$(".previous").click(function(){
+    if(animating) return false;
+    animating = true;
 
-{% endblock content %}
+    current_fs = $(this).parent();
+    previous_fs = $(this).parent().prev();
+
+    // de-activate current step on progressbar
+    $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+    // show the previous fieldset
+    previous_fs.show(); 
+    // hide the current fieldset with style
+    current_fs.animate({opacity: 0}, {
+        step: function(now, mx) {
+            scale = 0.8 + (1 - now) * 0.2;
+            left = ((1-now) * 50)+"%";
+            opacity = 1 - now;
+            current_fs.css({'left': left});
+            previous_fs.css({'transform': 'scale('+scale+')', 'opacity': opacity});
+        }, 
+        duration: 800, 
+        complete: function(){
+            current_fs.hide();
+            animating = false;
+        }, 
+        easing: 'easeInOutBack'
+    });
+});
+
+$(".submit").click(function(){
+    return false; // Here you can add the form submission code
+});
+
+    </script>
+  </body>
+</html>

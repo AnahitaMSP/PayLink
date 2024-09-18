@@ -1,39 +1,166 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css" referrerpolicy="no-referrer" />
+  </head>
+  <style>
+    @font-face {
+    font-family: iranSans;
+    src: url(./font/IRANSansWeb\(FaNum\).woff);
+}
 
-{% block title %} ورود {% endblock %}
+*,::before,::after{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: iranSans, sans-serif;
+    direction: rtl;
+}
 
-{% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header text-center">
-                    <h2 class="h4">ورود به حساب کاربری</h2>
-                </div>
-                <div class="card-body">
-                    <form action="{% url 'accounts:login' %}" method="POST">
-                        {% csrf_token %}
-                        <div class="form-group mb-3">
-                            <label for="username">شماره موبایل</label>
-                            <input type="tel" class="form-control" name="username" id="username" placeholder="09xxxxxxxxx" required>
-                            <div class="invalid-feedback">لطفا شماره موبایل معتبر وارد کنید.</div>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="password">کلمه عبور</label>
-                            <input type="password" class="form-control" name="password" id="password" placeholder="حداقل 8 کاراکتر" required>
-                            <div class="invalid-feedback">لطفا کلمه عبور معتبر وارد کنید.</div>
-                        </div>
-                        <div class="form-group d-flex justify-content-between align-items-center">
-                            <a href="{% url 'accounts:forgot_password' %}" class="text-primary">رمز عبور را فراموش کرده‌اید؟</a>
-                            <button type="submit" class="btn btn-primary">ورود</button>
-                        </div>
-                        <div class="text-center mt-3">
-                            <p>حساب کاربری ندارید؟ <a href="{% url 'accounts:registration_step_one' %}" class="link">ثبت نام کنید</a></p>
-                        </div>
-                    </form>
-                </div>
+.header {
+    position: relative;
+    background-image: url(./image/pm-0216-med-img_5635-895-2.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 80px 0px 00px 0px;
+    z-index: 9;
+    /* filter: blur(2px); */
+}
+
+.cover {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    background-color: transparent;
+    background-image: linear-gradient(310deg, #01D28EB3 0%, #FEFEFEEB 77%);
+    opacity: 1;
+    transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+}
+
+.article {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 500px;
+    padding: 30px 30px;
+    text-align: center;
+    box-shadow: 0px 0px 22px rgba(107, 107, 107, 0.1);
+    border-radius: 10px;
+}
+
+.article img {
+    width: 250px;
+    margin-bottom: 30px;
+}
+
+.article p {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.wrapper .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 5px;
+}
+
+.input-box input{
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    border: 1px solid rgb(18 18 18 / 20%);
+    border-radius: 10px;
+    padding: 20px 20px 20px 45px;
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: right;
+    font-size: 14.5px;
+    margin: -15px 0 15px;
+}
+
+.remember-forgot a {
+    text-decoration: none;
+}
+
+.wrapper .btn {
+    width: 100%;
+    height: 45px;
+    background-image: linear-gradient(90deg, #3B676A 3%,#0052A8 100%);
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    color: #FFF;
+    cursor: pointer;
+}
+
+.register-link a {
+    text-decoration: none;
+}
+
+@media screen and (max-width: 1024px) {
+    .article {
+        width: 100%;
+        top: 50%;
+        left: 50%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .article {
+        width: 100%;
+    }
+    .article h1 {
+        font-size: 1.3rem;
+    }
+}
+  </style>
+  <body>
+    <section class="header">
+      <div class="cover"></div>
+      <!-- <img src="./image/abstract-health-medical-science-healthcare-icon-di.jpg" alt=""> -->
+      <div class="article">
+        <img src="./image/DRDEX-logo.png" alt="logo"/>
+        <div class="wrapper">
+          <form action="{% url 'accounts:login' %}" method="POST">
+            {% csrf_token %}
+            <h1>ورود به حساب کاربری</h1>
+            <div class="input-box">
+              <input type="text" name="username" id="username" placeholder="شماره همراه" required />
             </div>
+            <div class="input-box">
+              <input type="password" name="password" id="password"  placeholder="رمز" required />
+            </div>
+
+            <div class="remember-forgot">
+              <!-- <label><input type="checkbox" />Remember me</label> -->
+              <a href="{% url 'accounts:forgot_password' %}">رمز عبور را فراموش کرده‌اید؟</a>
+            </div>
+
+            <button type="submit" class="btn">ورود</button>
+
+            <div class="register-link">
+              <p>حساب کاربری ندارید؟ <a href="{% url 'accounts:registration_step_one' %}" >ثبت نام کنید</a></p>
+            </div>
+          </form>
         </div>
-    </div>
-</div>
-{% endblock content %}
+      </div>
+    </section>
+  </body>
+</html>

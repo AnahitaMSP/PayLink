@@ -106,7 +106,7 @@ class CreateVisitView(LoginRequiredMixin, FormView):
         """
         ارسال پیامک حاوی لینک فاکتور و لینک پرداخت به بیمار
         """
-        invoice_url = f"https://pay.arzdex.shop/visits/invoices/{invoice.invoice_number}/"
+        invoice_url = f"http://panel.doctordex.ir/visits/invoices/{invoice.invoice_number}/"
         api_key = settings.KAVENEGAR_API_KEY  # استفاده از کلید API واقعی
         template = "send-payment-link"  # نام الگوی پیامک تعریف شده در پنل کاوه‌نگار
         send_paymentlink_sms(api_key, phone_number, invoice_url, template)
@@ -171,7 +171,7 @@ class CreatePaymentLinkView(View):
         ارسال پیامک حاوی لینک فاکتور و لینک پرداخت به بیمار
         """
         # لینک فاکتور
-        invoice_url = f"https://pay.arzdex.shop/visits/invoices/{invoice.invoice_number}/"
+        invoice_url = f"http://panel.doctordex.ir/visits/invoices/{invoice.invoice_number}/"
         api_key = settings.KAVENEGAR_API_KEY 
         template = "send-payment-link"  
         # ارسال پیامک
