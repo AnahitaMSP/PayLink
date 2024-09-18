@@ -1,44 +1,151 @@
 <!-- visits/templates/visits/payment_report.html -->
 
-<h2>{{ title }}</h2>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <style>
+@font-face {
+    font-family: iranSans;
+    src: url(./font/IRANSansWeb\(FaNum\).woff);
+}
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>نام بیمار</th>
-            <th>شماره موبایل</th>
-            <th>نوع بیمار</th> <!-- اضافه کردن نوع بیمار -->
-            <th>وظیفه</th> <!-- اضافه کردن وظیفه -->
-            <th>شماره فاکتور</th>
-            <th>مبلغ</th>
-            <th>وضعیت پرداخت</th>
-            <th>تاریخ پرداخت</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for visit in visits %}
-        <tr>
-            <td>{{ visit.patient_name }}</td>
-            <td>{{ visit.phone_number }}</td>
-            <td>{{ visit.patient_type_display }}</td> <!-- نمایش نوع بیمار -->
-            <td>{{ visit.task_name }}</td> <!-- نمایش نام وظیفه -->
-            <td>{{ visit.invoice.invoice_number }}</td>
-            <td>{{ visit.payment.amount }}</td>
-            <td>
-                {% if visit.payment.status == 1 %}
-                    در انتظار
-                {% elif visit.payment.status == 2 %}
-                    پرداخت موفق
-                {% else %}
-                    پرداخت ناموفق
-                {% endif %}
-            </td>
-            <td>{{ visit.payment.created_date|date:"Y-m-d H:i" }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="8" class="text-center">پرداختی یافت نشد.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+*,::before,::after{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: iranSans, sans-serif;
+    direction: rtl;
+}
+
+.header {
+    position: relative;
+    background-image: url(./image/pm-0216-med-img_5635-895-2.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 80px 0px 00px 0px;
+    z-index: 9;
+    /* filter: blur(2px); */
+}
+
+.cover {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    background-color: transparent;
+    background-image: linear-gradient(310deg, #01D28EB3 0%, #FEFEFEEB 77%);
+    opacity: 1;
+    transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+}
+
+.article {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 800px;
+    padding: 30px 30px;
+    text-align: center;
+    box-shadow: 0px 0px 22px rgba(107, 107, 107, 0.1);
+    border-radius: 10px;
+    background-color: #ffffff99;
+}
+
+.article img {
+    width: 200px;
+    margin-bottom: 5px;
+}
+
+.container-tabel {
+    height: 300px;
+    overflow-y: auto;
+}
+
+table, td, th {  
+    border: 1px solid #333;
+    text-align:  right;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    padding: 15px;
+  }
+
+@media screen and (max-width: 1024px) {
+    .article {
+        width: 100%;
+        top: 50%;
+        left: 50%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .article {
+        width: 92%;
+    }
+    .article h1 {
+        font-size: 1.3rem;
+    }
+}
+
+  </style>
+  <body>
+    <section class="header">
+      <div class="cover"></div>
+      <!-- <img src="./image/abstract-health-medical-science-healthcare-icon-di.jpg" alt=""> -->
+      <div class="article">
+        <img src="./image/DRDEX-logo.png" alt="logo" />
+        <h1>پرداخت‌های موفق</h1>
+        <div class="container-tabel">
+          <table>
+            <tr>
+              <th>نام بیمار</th>
+              <th>شماره موبایل</th>
+              <th>نوع بیمار	</th>
+              <th>بابت</th>
+              <th>شماره فاکتور</th>
+              <th>مبلغ</th>
+              <th>تاریخ</th>
+            </tr>
+
+            {% for visit in visits %}
+            <tr>
+              <td>{{ visit.patient_name }}</td>
+              <td>{{ visit.phone_number }}</td>
+              <td>{{ visit.patient_type_display }}</td>
+              <td>{{ visit.task_name }}</td>
+              <td>{{ visit.invoice.invoice_number }}</td>
+              <td>{{ visit.payment.amount }}</td>
+
+              <td>{{ visit.payment.created_date|date:"Y-m-d H:i" }}</td>
+            </tr>
+
+            {% empty %}
+
+            <td>پرداختی یافت نشد.</td>
+            {% endfor %}
+
+          </table>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
+

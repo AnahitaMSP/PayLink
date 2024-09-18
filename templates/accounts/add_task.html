@@ -1,38 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-{% block content %}
-  <h2>افزودن وظیفه جدید</h2>
+  <style>
+    @font-face {
+  font-family: iranSans;
+  src: url(./font/IRANSansWeb\(FaNum\).woff);
+}
 
-  <a href="{% url 'website:index' %}">&larr;</a>
+*,
+::before,
+::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: iranSans, sans-serif;
+  direction: rtl;
+}
 
-  <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">ذخیره</button>
-  </form>
+.header {
+  position: relative;
+  background-image: url(./image/pm-0216-med-img_5635-895-2.webp);
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100vh;
+  transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding: 80px 0px 00px 0px;
+  z-index: 9;
+  /* filter: blur(2px); */
+}
 
-  <h2>لیست وظایف</h2>
-  {% if tasks %}
-    <table>
-      <thead>
-        <tr>
-          <th>نام وظیفه</th>
-          <th>قیمت</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for task in tasks %}
-          <tr>
-            <td>{{ task.name }}</td>
-            <td>{{ task.fee }}</td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="2">هیچ وظیفه‌ای اضافه نشده است.</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>هیچ وظیفه‌ای اضافه نشده است.</p>
-  {% endif %}
-{% endblock %}
+.cover {
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: transparent;
+  background-image: linear-gradient(310deg, #01d28eb3 0%, #fefefeeb 77%);
+  opacity: 1;
+  transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+}
+
+.article {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  padding: 30px 30px;
+  text-align: center;
+  box-shadow: 0px 0px 22px rgba(107, 107, 107, 0.1);
+  border-radius: 10px;
+  background-color: #ffffff99;
+}
+
+.article img {
+  width: 250px;
+  margin-bottom: 10px;
+}
+
+.form .input-box {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.input-box label {
+  color: #333;
+}
+
+.form .input-box input {
+  position: relative;
+  height: 40px;
+  width: 100%;
+  font-size: 0.8rem;
+  color: #707070;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 0 15px;
+  margin-top: 8px;
+}
+
+.input-box input:focus {
+  box-shadow: 0 0 8px #33333330;
+  border: 1px solid rgb(103, 106, 251);
+}
+
+.form .input-box input::-webkit-inner-spin-button {
+  display: none;
+}
+
+.form :where(.input-box input, .select-box) {
+  position: relative;
+  height: 40px;
+  width: 100%;
+  font-size: 0.8rem;
+  background-color: transparent;
+  color: #707070;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 0 15px;
+  margin-top: 8px;
+}
+
+.select-box select {
+  background-color: transparent;
+}
+
+.form :where(.input-box input, .select-box)::-webkit-inner-spin-button {
+  display: none;
+  background-color: transparent;
+}
+
+.select-box select {
+  height: 100%;
+  width: 100%;
+  outline: none;
+  border: none;
+  color: #707070;
+  font-size: 0.8rem;
+}
+
+.form .box-colum {
+  display: flex;
+  column-gap: 15px;
+}
+
+.btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-container button {
+  height: 40px;
+  font-size: 1rem;
+  font-weight: 400;
+  border: none;
+  margin-top: 30px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.send a {
+  display: block;
+  height: 40px;
+  width: 100%;
+  padding: 10px 25px;
+  background-image: linear-gradient(90deg, #3b676a 3%, #0052a8 100%);
+  text-decoration: none;
+  color: #fff;
+  line-height: 20px;
+}
+
+.btn-dashbord a {
+  display: block;
+  height: 40px;
+  width: 100%;
+  padding: 10px 25px;
+  background-color: #3b676a;
+  text-decoration: none;
+  color: #fff;
+  line-height: 20px;
+}
+
+.form button:hover {
+  background-image: linear-gradient(90deg, #66bcc2 3%, #006cdf 100%);
+}
+
+table,
+td,
+th {
+  border: 1px solid #333;
+  text-align: right;
+  margin-top: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  padding: 5px;
+}
+
+.container-tabel {
+    height: 308px;
+    overflow-y: auto;
+    margin: 20px 0;
+}
+
+@media screen and (max-width: 1024px) {
+  .article {
+    width: 100%;
+    top: 50%;
+    left: 50%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .article {
+    width: 100%;
+    box-shadow: none;
+    background-color: transparent;
+  }
+  .article h1 {
+    font-size: 1.3rem;
+  }
+  .form .box-colum {
+    flex-wrap: wrap;
+  }
+  .container .form {
+    margin-top: 12px;
+  }
+  .form .input-box {
+    margin-top: 15px;
+  }
+}
+
+  </style>
+  <body>
+    <section class="header">
+      <div class="cover"></div>
+      <!-- <img src="./image/abstract-health-medical-science-healthcare-icon-di.jpg" alt=""> -->
+      <div class="article">
+        <img src="./image/DRDEX-logo.png" alt="logo" />
+        <h1>لیست خدمات</h1>
+        <form class="form"  method="post">
+
+          {% csrf_token %}
+
+          <div class="input-box">
+              <div class="box-colum">
+                {{ form.name }}
+                {{ form.fee }}          
+              
+              </div>
+          </div>
+          <div class="btn-container">
+            <button class="send" type="submit">
+              <a >ذخیره</a>
+            </button>
+            <button class="btn-dashbord" type="submit">
+              <a href="{% url 'website:index' %}">بازگشت به داشبورد</a>
+            </button>
+          </div>
+          {% if tasks %}
+          <div class="container-tabel">
+            <table>
+              <thead>
+                <tr>
+                  <th>خدمات</th>
+                  <th>مبلغ</th>
+                </tr>
+              </thead>
+             <tbody>
+
+              {% for task in tasks %}
+
+                <td>{{ task.name }}</td>
+                <td>{{ task.fee }}</td>
+              </tr>
+
+              {% empty %}
+
+              <td colspan="2">هیچ وظیفه‌ای اضافه نشده است.</td>
+
+              {% endfor %}
+
+             </tbody>
+            </table>
+          </div>
+
+          {% else %}
+          <p>هیچ وظیفه‌ای اضافه نشده است.</p>
+        {% endif %}
+
+        </form>
+      </div>
+    </section>
+  </body>
+</html>

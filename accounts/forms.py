@@ -86,6 +86,11 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ['name', 'fee']  # نام وظیفه و قیمت
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':"نوع خدمت"}),
+            'fee': forms.TextInput(attrs={'class': 'form-control','placeholder':'مبلغ به ریال'}),
+
+        }  
 
 class PhoneNumberForm(forms.Form):
     phone_number = forms.CharField(

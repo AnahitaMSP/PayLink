@@ -93,7 +93,7 @@ class CreateVisitView(LoginRequiredMixin, FormView):
         """
         ایجاد فاکتور جدید برای ویزیت
         """
-        invoice_number = f"INV-{visit.id}-{visit.created_at.strftime('%Y%m%d%H%M%S')}"
+        invoice_number = f"DRDX-{visit.id}-{visit.created_at.strftime('%Y%m%d%H%M%S')}"
         invoice = Invoice.objects.create(
             visit=visit,
             invoice_number=invoice_number,
