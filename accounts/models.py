@@ -149,7 +149,8 @@ class Profile(models.Model):
     )
     gender = models.CharField(max_length=10, choices=[('male', 'مرد'), ('female', 'زن'), ('other', 'سایر')],null=True, blank=True)
     visit_fee = models.DecimalField(max_digits=200, decimal_places=0, default=0)
-    
+    brand_name = models.CharField(max_length=255,null=True, blank=True)
+
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 

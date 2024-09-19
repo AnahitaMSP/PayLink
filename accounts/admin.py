@@ -101,7 +101,7 @@ class TaskAdmin(admin.ModelAdmin):
         return qs
 
 class CustomProfileAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "first_name", "last_name")
+    list_display = ("id", "user", "first_name", "last_name","brand_name")
     list_filter = ("user__type",)  # فیلتر بر اساس نوع کاربر (User Type)
     search_fields = ("first_name", "last_name", "user__phone_number")
 

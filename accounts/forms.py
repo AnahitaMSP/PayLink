@@ -26,11 +26,12 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = [
             'first_name', 'last_name', 'image', 'job', 'national_code', 'iban', 
             'bank_card_number', 'province', 'city', 'address', 'tell_phone', 'gender', 
-            'specialties'
+            'specialties','brand_name'
         ]
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'نام'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'نام خانوادگی'}),
+            'brand_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'نام مرکز'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'national_code': forms.TextInput(attrs={'class': 'form-control','placeholder':'کد ملی'}),
             'iban': forms.TextInput(attrs={'class': 'form-control','placeholder':'شماره شبا'}),
@@ -47,7 +48,7 @@ class ProfileUpdateForm(forms.ModelForm):
         queryset=ServiceType.objects.all(),
         required=False,
         empty_label="انتخاب شغل",
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control' , 'id':'type' , 'onchange':'handleSelectChange()'})
     )
 
     province = forms.ModelChoiceField(
@@ -72,8 +73,9 @@ class ProfileUpdateForm(forms.ModelForm):
     specialties = forms.ModelChoiceField(
         queryset=Specialty.objects.all(),
         required=False,
-        widget=forms.Select
+        widget=forms.Select(attrs={'id':'specialty'})
     )
+
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

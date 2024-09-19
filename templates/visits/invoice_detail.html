@@ -1,28 +1,196 @@
 <!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فاکتور</title>
-</head>
-<body>
-    <h1>فاکتور شماره {{ invoice.invoice_number }}</h1>
-    <p>بیمار: {{ invoice.visit.patient_name }}</p>
-    <p>تاریخ صدور: {{ invoice.issue_date }}</p> <!-- استفاده از تاریخ ایجاد فاکتور -->
-    <p>مبلغ: {{ invoice.amount }} تومان</p>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <style>
+    @font-face {
+    font-family: iranSans;
+    src: url(./font/IRANSansWeb\(FaNum\).woff);
+}
 
+*,::before,::after{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: iranSans, sans-serif;
+    direction: rtl;
+}
 
+.header {
+    position: relative;
+    background-image: url(./image/pm-0216-med-img_5635-895-2.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 80px 0px 00px 0px;
+    z-index: 9;
+    /* filter: blur(2px); */
+}
+
+.cover {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    background-color: transparent;
+    background-image: linear-gradient(310deg, #01D28EB3 0%, #FEFEFEEB 77%);
+    opacity: 1;
+    transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+}
+
+.article {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 800px;
+    padding: 30px 10px;
+    text-align: center;
+    box-shadow: 0px 0px 22px rgba(107, 107, 107, 0.1);
+    border-radius: 10px;
+    background-color: #ffffff99;
+}
+
+.article p {
+    color: red;
+    font-size: 12px;
+}
+
+.article img {
+    width: 200px;
+    margin-bottom: 5px;
+}
+.article p button {
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+.contaienr-tabel {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table, td, th {  
+    border: 1px solid #333;
+    text-align:  right;
+    font-size: 12px;
+    margin-top: 20px;
+    overflow-x:auto;
+  }
+  
+  
+  th, td {
+    padding: 15px;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  .container-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .container-link div a {
+    display: inline-block;
+    border-radius: 10px;
+    background-image: linear-gradient(90deg, #3B676A 3%,#0052A8 100%);
+    padding: 10px 25px;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .container-link button {
+    background-color: transparent;
+    border: none;
+  }
+
+  .container-link button a {
+    display: inline-block;
+    border-radius: 10px;
+    background-color: #5c9ee4;
+    padding: 10px 25px;
+    text-decoration: none;
+    color: #fff;
+  }
+
+@media screen and (max-width: 1024px) {
+    .article {
+        width: 100%;
+        top: 50%;
+        left: 50%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .article {
+        width: 92%;
+    }
+    .article h1 {
+        font-size: 1.3rem;
+    }
+    .container-link {
+        flex-direction: column;
+    }
+    .container-link div {
+        position: relative;
+        margin-top: 20px;
+    }
+    .container-link div a {
+        margin-top: 5px;
+    }
+}
+  </style>
+  <body>
+    <section class="header">
+      <div class="cover"></div>
+      <!-- <img src="./image/abstract-health-medical-science-healthcare-icon-di.jpg" alt=""> -->
+      <div class="article">
+        <img src="./image/DRDEX-logo.png" alt="logo" />
+        <h1>فرم پرداخت</h1>
     <form action="{% url 'visits:create_payment_link' invoice.invoice_number %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-primary">ساخت لینک پرداخت جدید</button>
 
-
-    {% if not invoice.visit.is_paid %}
-        <!-- نمایش لینک پرداخت فقط اگر پرداخت انجام نشده باشد -->
-        <p>برای پرداخت لطفاً بر روی لینک زیر کلیک کنید:</p>
-        <a href="{{ invoice.payment_link }}" target="_blank">پرداخت</a> <!-- لینک پرداخت از فاکتور -->
-    {% else %}
-        <p>پرداخت انجام شده است.</p>        
-    {% endif %}
-</body>
+        <p>توجه: این فاکتور از زمان صدور تا 2 دقیقه اعتبار دارد درصورت منقضی شدن از دکمه ساخت <button>فاکتور جدید</button> استفاده کنید.</p>
+          </form>
+        <div class="contaienr-tabel">
+          <table>
+            <tr>
+              <th>شماره فاکتور</th>
+              <th>نام بیمار</th>
+              <th>تاریخ</th>
+              <th>مبلغ</th>
+            </tr>
+            <tr>
+              <td>{{ invoice.invoice_number }}</td>
+              <td>{{ invoice.visit.patient_name }}</td>
+              <td>{{ invoice.issue_date }}</td>
+              <td>{{ invoice.amount }} ریال</td>
+            </tr>
+          </table>
+        </div>
+          <div class="container-link">
+            <div>
+              <a href="{{ invoice.payment_link }}">پرداخت فاکتور</a>
+            </div>
+          </div>
+      </div>
+    </section>
+  </body>
 </html>
